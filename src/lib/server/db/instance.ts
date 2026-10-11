@@ -1,4 +1,4 @@
-import { env } from '$env/dynamic/private';
+import { DATABASE_PATH } from '$app/env/private';
 import { createDb } from './index';
 
-export const db = createDb(env.DATABASE_PATH ?? 'data/nutric.db');
+export const db = createDb(DATABASE_PATH);

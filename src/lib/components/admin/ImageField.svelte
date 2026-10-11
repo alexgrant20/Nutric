@@ -17,7 +17,7 @@
 			</li>
 		{/each}
 	</ul>
-	<input type="file" name="file.{name}" accept="image/jpeg,image/png,image/webp" {multiple} class="block text-sm" aria-describedby={error ? `${name}-err` : undefined} />
+	<input type="file" name="file.{name}" aria-label={label} accept="image/jpeg,image/png,image/webp" {multiple} class="block text-sm" aria-describedby={error ? `${name}-err` : undefined} />
 	<p class="text-xs text-stone-600">JPG, PNG or WebP, up to 5 MB.</p>
 	{#if error}<p id="{name}-err" role="alert" class="text-sm text-red-800">{error}</p>{/if}
 </fieldset>

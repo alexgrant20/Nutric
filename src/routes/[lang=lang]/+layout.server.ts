@@ -1,5 +1,5 @@
-import { dev } from '$app/environment';
-import { env } from '$env/dynamic/private';
+import { dev } from '$app/env';
+import { NEWSLETTER_ENABLED } from '$app/env/private';
 import { db } from '$lib/server/db/instance';
 import { getChrome } from '$lib/server/content';
 import { LANGUAGES, type Lang } from '$lib/i18n/config';
@@ -13,6 +13,6 @@ export const load = ({ params }) => {
 	return {
 		lang, settings, nav, visible, contact,
 		languages: LANGUAGES.filter((l) => l.enabled),
-		newsletterEnabled: dev || env.NEWSLETTER_ENABLED === 'true'
+		newsletterEnabled: dev || NEWSLETTER_ENABLED
 	};
 };

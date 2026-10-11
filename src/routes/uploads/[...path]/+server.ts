@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { readFile } from 'node:fs/promises';
 import { extname } from 'node:path';
-import { env } from '$env/dynamic/private';
+import { UPLOAD_DIR } from '$app/env/private';
 import { resolveUploadPath } from '$lib/server/upload';
 
 const TYPES: Record<string, string> = {
@@ -9,7 +9,7 @@ const TYPES: Record<string, string> = {
 };
 
 export const GET = async ({ params }) => {
-	const full = resolveUploadPath(env.UPLOAD_DIR ?? 'data/uploads', params.path);
+	const full = resolveUploadPath(UPLOAD_DIR, params.path);
 	const type = full ? TYPES[extname(full).toLowerCase()] : undefined;
 	if (!full || !type) throw error(404);
 	try {

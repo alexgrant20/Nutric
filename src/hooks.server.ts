@@ -1,5 +1,5 @@
 import { redirect, type Handle } from '@sveltejs/kit';
-import { dev } from '$app/environment';
+import { dev } from '$app/env';
 import { db } from '$lib/server/db/instance';
 import { validateSession } from '$lib/server/auth';
 import { unsupportedLangRedirect } from '$lib/server/lang-redirect';

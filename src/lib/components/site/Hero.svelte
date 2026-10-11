@@ -11,9 +11,14 @@
 	let video: HTMLVideoElement | undefined = $state();
 	let paused = $state(false);
 	onMount(() => {
-		if (settings?.heroMediaType === 'video' && matchMedia('(prefers-reduced-motion: reduce)').matches) {
-			video?.pause();
-			paused = true;
+		if (settings?.heroMediaType === 'video' && matchMedia('(prefers-reduced-motion: reduce)').matches && video) {
+			const stop = () => {
+				video?.pause();
+				paused = true;
+			};
+			video.autoplay = false;
+			stop();
+			video.addEventListener('canplay', stop, { once: true });
 		}
 	});
 	function toggle() {

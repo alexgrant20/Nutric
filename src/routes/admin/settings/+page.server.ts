@@ -1,5 +1,5 @@
 import { fail } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
+import { UPLOAD_DIR } from '$app/env/private';
 import { db } from '$lib/server/db/instance';
 import * as s from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
@@ -25,7 +25,7 @@ export const actions = {
 		for (const field of ['logoImage', 'heroMedia', 'heroProductImage'] as const) {
 			const file = fd.get(`file.${field}`);
 			if (file instanceof File && file.size > 0) {
-				try { parsed.base[field] = await saveUpload(file, 'settings', env.UPLOAD_DIR ?? 'data/uploads'); }
+				try { parsed.base[field] = await saveUpload(file, 'settings', UPLOAD_DIR); }
 				catch (e) { errors[`f.${field}`] = e instanceof UploadError ? e.message : 'The upload failed.'; }
 			}
 		}

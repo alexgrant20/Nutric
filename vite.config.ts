@@ -13,7 +13,10 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 			adapter: adapter(),
-			alias: { $lib: 'src/lib' }
+			alias: { $lib: 'src/lib' },
+			// adapter-node 6 no longer reads ORIGIN at run time. Behind a TLS proxy set PROTOCOL_HEADER=x-forwarded-proto
+			// instead; for a plain-http build (for example the e2e run) set SITE_ORIGIN while building.
+			...(process.env.SITE_ORIGIN ? { paths: { origin: process.env.SITE_ORIGIN } } : {})
 		})
 	],
 	test: {

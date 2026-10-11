@@ -1,5 +1,5 @@
 import { error, fail, redirect } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
+import { UPLOAD_DIR } from '$app/env/private';
 import { db } from '$lib/server/db/instance';
 import { clientEntity, getEntity } from '$lib/server/entities';
 import { loadEntity, relationOptions } from '$lib/server/entity-crud';
@@ -30,7 +30,7 @@ export const actions: Actions = {
 		const e = getEntity(params.entity)!;
 		const id = parseId(params.id);
 		if (id === undefined) throw error(404);
-		const res = await saveFromForm(db, e, id, await request.formData(), env.UPLOAD_DIR ?? 'data/uploads');
+		const res = await saveFromForm(db, e, id, await request.formData(), UPLOAD_DIR);
 		if (!res.ok) return fail(400, { errors: res.errors, initial: res.initial });
 		throw redirect(303, `/admin/${e.key}?saved=1`);
 	}
