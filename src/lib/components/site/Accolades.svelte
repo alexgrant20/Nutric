@@ -1,128 +1,154 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
 	import { useT } from '$lib/i18n/context';
-	import { prefersReducedMotion, tilt } from '../ui/motion';
+	import { prefersReducedMotion } from '../ui/motion';
 	import Dialog from '../ui/Dialog.svelte';
 	import Img from '../ui/Img.svelte';
 
 	let { lang, items, expanded = false }: { lang: string; items: any[]; expanded?: boolean } = $props();
 	const t = useT();
+
+	// Newest first: the gallery opens on the latest recognition and the history recedes down the corridor.
+	const sorted = $derived([...items].sort((a, b) => (b.year ?? -1) - (a.year ?? -1) || a.sortOrder - b.sortOrder));
+	let mode: 'loading' | 'webgl' | 'flat' = $state('loading');
+	let station = $state(0);
 	let selected: any = $state(null);
 	let dialog: Dialog | undefined = $state();
+	let host: HTMLElement | undefined = $state();
+	let canvas: HTMLCanvasElement | undefined = $state();
+	let scene: { goTo(i: number): void; step(d: number): void } | null = null;
+	const current = $derived(sorted[Math.min(station, sorted.length - 1)]);
 
-	let pinned = $state(false);
-	let travel = $state(0);
-	let currentYear: number | null = $state(null);
-	let section: HTMLElement | undefined = $state();
-	let viewport: HTMLElement | undefined = $state();
-	let track: HTMLElement | undefined = $state();
-	let els: HTMLElement[] = $state([]);
-	let raf = 0;
-
-	// Newest year first: the cabinet opens on the latest recognition and the history runs to the right.
-	const groups = $derived.by(() => {
-		const map = new Map<number | null, any[]>();
-		for (const it of items) map.set(it.year ?? null, [...(map.get(it.year ?? null) ?? []), it]);
-		return [...map.entries()].sort((a, b) => (b[0] ?? -1) - (a[0] ?? -1));
-	});
-	const flat = $derived(groups.flatMap(([year, list]) => list.map((it) => ({ it, year }))));
-	const indexOf = (id: number) => flat.findIndex((x) => x.it.id === id);
 	function show(it: any) { selected = it; dialog?.show(); }
-	// Titles generated from the file name carry no information, so they are not printed under the trophy.
 	const hasCaption = (it: any) => !!(it.issuer || it.t.description);
-	const clamp = (v: number) => Math.min(1, Math.max(0, v));
 
-	function measure() {
-		if (!track || !viewport) return;
-		travel = Math.max(0, track.scrollWidth - viewport.clientWidth);
+	function webglAvailable() {
+		try {
+			const c = document.createElement('canvas');
+			return !!(c.getContext('webgl2') || c.getContext('webgl'));
+		} catch {
+			return false;
+		}
 	}
-	/* Scroll drives a camera along the cabinet: the section is pinned, the track slides sideways, and every trophy
-	   turns toward the viewer and comes forward as it passes the centre. */
-	function frame() {
-		raf = 0;
-		if (!pinned || !section || !viewport) return;
-		const r = section.getBoundingClientRect();
-		const p = clamp(-r.top / Math.max(1, r.height - window.innerHeight));
-		section.style.setProperty('--p', p.toFixed(4));
-		const vw = viewport.clientWidth;
-		let best = Infinity;
-		let year: number | null = currentYear;
-		flat.forEach((entry, i) => {
-			const el = els[i];
-			if (!el) return;
-			const center = el.offsetLeft + el.offsetWidth / 2 - p * travel;
-			const c = (center - vw / 2) / (vw / 2);
-			el.style.setProperty('--c', Math.max(-1.6, Math.min(1.6, c)).toFixed(3));
-			el.style.setProperty('--a', Math.min(1, Math.abs(c)).toFixed(3));
-			if (Math.abs(c) < best) { best = Math.abs(c); year = entry.year; }
-		});
-		if (year !== currentYear) currentYear = year;
+	function key(e: KeyboardEvent) {
+		if (!scene) return;
+		if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); scene.step(1); }
+		else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); scene.step(-1); }
+		else if (e.key === 'Home') { e.preventDefault(); scene.goTo(0); }
+		else if (e.key === 'End') { e.preventDefault(); scene.goTo(sorted.length - 1); }
+		else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (current) show(current); }
 	}
-	const schedule = () => { if (!raf) raf = requestAnimationFrame(frame); };
 
-	onMount(() => {
-		pinned = !prefersReducedMotion();
-		if (!pinned) return;
-		tick().then(() => { measure(); frame(); });
-		addEventListener('scroll', schedule, { passive: true });
-		const onResize = () => { measure(); schedule(); };
-		addEventListener('resize', onResize);
+	let started = false;
+	// Runs once the stage element exists (bind:this is set after mount).
+	$effect(() => {
+		if (!host || started) return;
+		started = true;
+		if (prefersReducedMotion() || !webglAvailable()) { mode = 'flat'; return; }
+		let disposed = false;
+		let starting = false;
+		let live: { setVisible(v: boolean): void; resize(w: number, h: number): void; dispose(): void } | null = null;
+		const fit = () => { if (live && host) live.resize(host.clientWidth, host.clientHeight); };
+
+		// three.js is loaded only when the gallery is about to come into view.
+		const io = new IntersectionObserver(async ([entry]) => {
+			if (entry.isIntersecting && !live && !starting) {
+				starting = true;
+				try {
+					const [three, mod] = await Promise.all([import('three'), import('./accolade-scene')]);
+					if (disposed || !canvas) return;
+					// The floor numerals use the serif; never wait long for it (a hidden tab can stall font loading).
+					await Promise.race([document.fonts?.load('500 100px Fraunces').catch(() => null), new Promise((r) => setTimeout(r, 700))]);
+					const css = getComputedStyle(document.documentElement);
+					const val = (name: string, fallback: string) => css.getPropertyValue(name).trim() || fallback;
+					const built = new mod.AccoladeScene(
+						three,
+						canvas,
+						sorted.map((it) => ({ id: it.id, image: it.image, year: it.year ?? null })),
+						{
+							colors: { cream: val('--cream-100', '#F4F1E8'), forest: val('--forest-700', '#1F3B2A'), forestDark: val('--forest-900', '#12241A') },
+							onStation: (i) => { station = i; },
+							onPick: (id) => { const it = sorted.find((x) => x.id === id); if (it) show(it); }
+						}
+					);
+					live = built;
+					scene = built;
+					mode = 'webgl';
+					fit();
+					built.setVisible(true);
+				} catch (err) {
+					mode = 'flat';
+				}
+			}
+			live?.setVisible(entry.isIntersecting);
+		}, { rootMargin: '300px' });
+		if (host) io.observe(host);
+		const ro = new ResizeObserver(fit);
+		if (host) ro.observe(host);
 		return () => {
-			cancelAnimationFrame(raf);
-			removeEventListener('scroll', schedule);
-			removeEventListener('resize', onResize);
+			disposed = true;
+			io.disconnect();
+			ro.disconnect();
+			live?.dispose();
+			scene = null;
 		};
 	});
-
-	// A keyboard user tabbing to an off-screen trophy brings it to the centre by scrolling the page to its position.
-	function bring(i: number) {
-		if (!pinned || !section || !viewport || !travel) return;
-		const el = els[i];
-		const p = clamp((el.offsetLeft + el.offsetWidth / 2 - viewport.clientWidth / 2) / travel);
-		const top = section.getBoundingClientRect().top + window.scrollY;
-		window.scrollTo({ top: top + p * (section.offsetHeight - window.innerHeight), behavior: 'auto' });
-	}
 </script>
 
-<section id="accolades" bind:this={section} class="acc relative bg-cream-100" class:acc-pinned={pinned} style="--travel: {travel}px">
-	<div class="acc-pin relative overflow-hidden px-4 py-20 sm:px-6 sm:py-24">
-		<div class="relative mx-auto flex w-full max-w-7xl flex-wrap items-end justify-between gap-4">
+<section id="accolades" class="relative overflow-hidden bg-cream-100 px-4 py-24 sm:px-6 sm:py-32">
+	<div class="mx-auto max-w-7xl">
+		<div class="flex flex-wrap items-end justify-between gap-4">
 			<svelte:element this={expanded ? 'h1' : 'h2'} class="font-serif text-[clamp(2.25rem,5vw,4rem)] leading-none text-forest-700">{t('accolades.title')}</svelte:element>
 			{#if !expanded}<a href="/{lang}/accolades" class="inline-flex min-h-11 items-center text-forest-700 underline underline-offset-4">{t('accolades.title')}</a>{/if}
 		</div>
 
-		{#if pinned && currentYear}
-			<p class="acc-year pointer-events-none absolute inset-x-0 top-1/2 select-none text-center font-serif tabular-nums leading-none" aria-hidden="true">{currentYear}</p>
-		{/if}
-		<div class="acc-floor" aria-hidden="true"></div>
-
-		<div bind:this={viewport} class="acc-viewport relative mt-12" class:overflow-x-auto={!pinned}>
-			<ol bind:this={track} class="acc-track relative flex min-w-max items-end gap-14 pb-12">
-				{#each groups as [year, list] (year)}
-					<li class="flex flex-col gap-4">
-						{#if year}<p class="font-serif text-2xl tabular-nums text-forest-700">{year}</p>{/if}
-						<ul class="flex items-end gap-10">
-							{#each list as it (it.id)}
-								<li class="trophy" bind:this={els[indexOf(it.id)]} use:tilt={{ max: 11 }}>
-									<button type="button" onclick={() => show(it)} onfocus={() => bring(indexOf(it.id))} class="group relative block text-center" aria-label={it.t.title}>
-										<img src={it.image} alt={it.t.imageAlt ?? it.t.title} class="trophy-img" loading="lazy" draggable="false"
-											onload={(e) => { const i = e.currentTarget; i.style.width = `${Math.round(i.naturalWidth * 1.4)}px`; }} />
-										<span class="trophy-shadow" aria-hidden="true"></span>
-									</button>
-									{#if hasCaption(it)}
-										<p class="mt-4 max-w-[12rem] text-sm text-stone-600">
-											{#if it.issuer}<span class="block font-medium text-forest-700">{it.issuer}</span>{/if}
-											{#if expanded && it.t.description}{it.t.description}{/if}
-										</p>
-									{/if}
-								</li>
-							{/each}
-						</ul>
+		{#if mode === 'flat'}
+			<!-- No WebGL, or reduced motion: a plain shelf of the same trophies. -->
+			<ul class="mt-12 flex items-end gap-10 overflow-x-auto pb-8">
+				{#each sorted as it (it.id)}
+					<li class="shrink-0 text-center">
+						<button type="button" onclick={() => show(it)} class="block" aria-label={it.t.title}>
+							<Img src={it.image} alt={it.t.imageAlt ?? it.t.title} class="mx-auto h-auto max-h-60 w-auto max-w-[78vw]" />
+						</button>
+						{#if it.year}<p class="mt-3 font-serif text-xl tabular-nums text-forest-700">{it.year}</p>{/if}
+						{#if hasCaption(it)}<p class="mx-auto mt-1 max-w-[12rem] text-sm text-stone-600">{it.issuer ?? ''}{expanded && it.t.description ? ` ${it.t.description}` : ''}</p>{/if}
 					</li>
 				{/each}
-				<li class="acc-shelf" aria-hidden="true"></li>
+			</ul>
+		{:else}
+			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+			<div bind:this={host} tabindex="0" role="group" aria-roledescription="carousel" aria-label={t('accolades.gallery')} onkeydown={key}
+				class="stage relative mt-12 overflow-hidden rounded-md border border-forest-700/15">
+				<canvas bind:this={canvas} class="block size-full touch-pan-y cursor-grab" aria-hidden="true"></canvas>
+
+				{#if mode === 'loading'}
+					<p class="absolute inset-0 flex items-center justify-center text-stone-600" role="status">{t('accolades.loading')}</p>
+				{:else if current}
+					<div class="pointer-events-none absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-3 p-4 sm:p-6">
+						<div>
+							{#if current.year}<p class="font-serif text-[clamp(2rem,5vw,3.5rem)] leading-none tabular-nums text-forest-700">{current.year}</p>{/if}
+							<p class="mt-1 text-sm tabular-nums text-stone-600">{t('accolades.count', { n: station + 1, total: sorted.length })}</p>
+						</div>
+						<div class="pointer-events-auto flex items-center gap-2">
+							<button type="button" class="size-12 rounded-sm border border-forest-700/40 bg-cream-100 text-forest-700 disabled:opacity-40" aria-label={t('accolades.prev')} disabled={station === 0} onclick={() => scene?.step(-1)}>
+								<svg viewBox="0 0 20 20" class="mx-auto size-5" aria-hidden="true"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" /></svg>
+							</button>
+							<button type="button" class="min-h-12 rounded-sm bg-forest-700 px-5 font-medium text-cream-100" onclick={() => show(current)}>{t('accolades.view')}</button>
+							<button type="button" class="size-12 rounded-sm border border-forest-700/40 bg-cream-100 text-forest-700 disabled:opacity-40" aria-label={t('accolades.next')} disabled={station === sorted.length - 1} onclick={() => scene?.step(1)}>
+								<svg viewBox="0 0 20 20" class="mx-auto size-5" aria-hidden="true"><path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" /></svg>
+							</button>
+						</div>
+					</div>
+					<p class="pointer-events-none absolute left-4 top-4 hidden text-sm text-stone-600 sm:block">{t('accolades.hint')}</p>
+				{/if}
+				<p class="sr-only" aria-live="polite">{current ? `${current.year ?? ''} ${t('accolades.count', { n: station + 1, total: sorted.length })}` : ''}</p>
+			</div>
+
+			<ol class="sr-only">
+				{#each sorted as it (it.id)}
+					<li><button type="button" onclick={() => show(it)}>{it.year ?? ''} {it.t.title}</button></li>
+				{/each}
 			</ol>
-		</div>
+		{/if}
 	</div>
 </section>
 
@@ -139,80 +165,12 @@
 </Dialog>
 
 <style>
-	.acc-pinned {
-		height: calc(100svh + var(--travel) * 0.5);
-	}
-	.acc-pinned .acc-pin {
-		position: sticky;
-		top: 0;
-		height: 100svh;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-	}
-	.acc-pinned .acc-track {
-		/* The first and last trophies can reach the centre of the screen. */
-		padding-inline: calc(50vw - 8rem);
-		transform: translate3d(calc(var(--p, 0) * var(--travel) * -1), 0, 0);
-		will-change: transform;
-	}
-	/* The year in play stands behind the trophies like a gallery wall number. */
-	.acc-year {
-		font-size: clamp(9rem, 30vw, 26rem);
-		color: color-mix(in srgb, var(--forest-700) 7%, transparent);
-		transform: translate3d(0, -62%, 0);
-	}
-	.acc-floor {
-		position: absolute;
-		inset-inline: 0;
-		bottom: 0;
-		height: 34%;
-		background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--forest-700) 11%, var(--cream-100)));
-		pointer-events: none;
-	}
-	.acc-shelf {
-		position: absolute;
-		left: -50vw;
-		right: -50vw;
-		bottom: 2rem;
-		height: 0.8rem;
-		border-radius: 0.125rem;
-		background: linear-gradient(to bottom, color-mix(in srgb, var(--forest-700) 26%, var(--cream-100)), color-mix(in srgb, var(--forest-700) 12%, var(--cream-100)));
-		box-shadow: 0 0.6rem 0.9rem -0.4rem rgb(0 0 0 / 0.2);
-		pointer-events: none;
-	}
-	.acc-pinned .acc-shelf {
-		left: 0;
-		right: 0;
-	}
-	/* Trophies stand on the shelf. Near the centre they face the viewer and rise; further out they turn away and recede. */
-	.trophy {
-		position: relative;
-		transform-origin: 50% 100%;
-		transform: perspective(1000px) translate3d(0, calc((1 - var(--a, 1)) * -16px), calc(var(--a, 1) * -150px))
-			rotateY(calc(var(--c, 0) * -30deg)) scale(calc(1 + (1 - var(--a, 1)) * 0.12));
-		transition: transform 0.12s linear;
-	}
-	.trophy :global(.trophy-img) {
-		display: block;
-		max-width: min(78vw, 26rem);
-		width: auto;
-		height: auto;
-		object-fit: contain;
-		max-height: min(24rem, 44svh);
-		margin: 0 auto;
-		transform: perspective(700px) rotateY(var(--ry, 0deg)) rotateX(calc(var(--rx, 0deg) * 0.35));
-		transition: transform 0.3s ease-out;
-		will-change: transform;
-	}
-	.trophy-shadow {
-		position: absolute;
-		left: 12%;
-		right: 12%;
-		bottom: -0.5rem;
-		height: 0.9rem;
-		border-radius: 50%;
-		background: radial-gradient(closest-side, rgb(0 0 0 / 0.4), transparent);
-		filter: blur(4px);
+	/* A lit studio: soft light falls from above onto the corridor. */
+	.stage {
+		height: clamp(28rem, 78svh, 48rem);
+		background:
+			radial-gradient(ellipse 70% 55% at 50% 12%, color-mix(in srgb, white 70%, var(--cream-100)), transparent 70%),
+			var(--cream-100);
+		touch-action: pan-y;
 	}
 </style>

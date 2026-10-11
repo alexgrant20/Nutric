@@ -68,5 +68,12 @@
 	"coverflow.label": "ผลิตภัณฑ์ในคอลเลกชันนี้",
 	"coverflow.count": "{n} จาก {total}",
 	"videos.prev": "วิดีโอก่อนหน้า",
-	"videos.next": "วิดีโอถัดไป"
+	"videos.next": "วิดีโอถัดไป",
+	"accolades.prev": "รางวัลก่อนหน้า",
+	"accolades.next": "รางวัลถัดไป",
+	"accolades.view": "ดูภาพขยาย",
+	"accolades.hint": "ลาก เลื่อนไปด้านข้าง หรือใช้ปุ่มลูกศร",
+	"accolades.count": "{n} จาก {total}",
+	"accolades.loading": "กำลังเตรียมห้องจัดแสดง",
+	"accolades.gallery": "ห้องจัดแสดงรางวัล"
 }

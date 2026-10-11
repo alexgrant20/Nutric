@@ -68,5 +68,12 @@
 	"coverflow.label": "此系列的产品",
 	"coverflow.count": "第 {n} 个，共 {total} 个",
 	"videos.prev": "上一个视频",
-	"videos.next": "下一个视频"
+	"videos.next": "下一个视频",
+	"accolades.prev": "上一个奖项",
+	"accolades.next": "下一个奖项",
+	"accolades.view": "查看大图",
+	"accolades.hint": "拖动、横向滚动或使用方向键",
+	"accolades.count": "第 {n} 个，共 {total} 个",
+	"accolades.loading": "正在准备展厅",
+	"accolades.gallery": "荣誉展厅"
 }

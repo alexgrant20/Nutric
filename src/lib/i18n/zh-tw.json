@@ -68,5 +68,12 @@
 	"coverflow.label": "此系列的產品",
 	"coverflow.count": "第 {n} 個，共 {total} 個",
 	"videos.prev": "上一部影片",
-	"videos.next": "下一部影片"
+	"videos.next": "下一部影片",
+	"accolades.prev": "上一個獎項",
+	"accolades.next": "下一個獎項",
+	"accolades.view": "查看大圖",
+	"accolades.hint": "拖曳、橫向捲動或使用方向鍵",
+	"accolades.count": "第 {n} 個，共 {total} 個",
+	"accolades.loading": "正在準備展廳",
+	"accolades.gallery": "榮譽展廳"
 }

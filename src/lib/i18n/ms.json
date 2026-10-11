@@ -68,5 +68,12 @@
 	"coverflow.label": "Produk dalam koleksi ini",
 	"coverflow.count": "{n} daripada {total}",
 	"videos.prev": "Video sebelumnya",
-	"videos.next": "Video seterusnya"
+	"videos.next": "Video seterusnya",
+	"accolades.prev": "Anugerah sebelumnya",
+	"accolades.next": "Anugerah seterusnya",
+	"accolades.view": "Lihat lebih besar",
+	"accolades.hint": "Seret, tatal ke sisi atau guna kekunci anak panah",
+	"accolades.count": "{n} daripada {total}",
+	"accolades.loading": "Menyediakan galeri",
+	"accolades.gallery": "Galeri anugerah"
 }

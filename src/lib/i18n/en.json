@@ -68,5 +68,12 @@
 	"coverflow.label": "Products in this collection",
 	"coverflow.count": "{n} of {total}",
 	"videos.prev": "Previous video",
-	"videos.next": "Next video"
+	"videos.next": "Next video",
+	"accolades.prev": "Previous accolade",
+	"accolades.next": "Next accolade",
+	"accolades.view": "View larger",
+	"accolades.hint": "Drag, scroll sideways or use the arrow keys",
+	"accolades.count": "{n} of {total}",
+	"accolades.loading": "Preparing the gallery",
+	"accolades.gallery": "Accolades gallery"
 }
