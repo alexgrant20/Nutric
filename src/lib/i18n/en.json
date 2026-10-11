@@ -1,6 +1,6 @@
 {
 	"nav.products": "Products",
-	"nav.testimonials": "Testimonials",
+	"nav.testimonials": "Videos",
 	"nav.accolades": "Accolades",
 	"nav.news": "News",
 	"nav.about": "About",
@@ -18,7 +18,7 @@
 	"collections.viewAll": "View all products",
 	"about.title": "About us",
 	"about.more": "Read about us",
-	"testimonials.title": "Testimonials",
+	"testimonials.title": "Videos",
 	"testimonials.play": "Play video",
 	"testimonials.loading": "Loading video",
 	"testimonials.error": "The video could not load.",

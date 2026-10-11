@@ -1,6 +1,6 @@
 {
 	"nav.products": "產品",
-	"nav.testimonials": "客戶見證",
+	"nav.testimonials": "影片",
 	"nav.accolades": "榮譽獎項",
 	"nav.news": "新聞",
 	"nav.about": "關於我們",
@@ -18,7 +18,7 @@
 	"collections.viewAll": "查看全部產品",
 	"about.title": "關於我們",
 	"about.more": "閱讀關於我們",
-	"testimonials.title": "客戶見證",
+	"testimonials.title": "影片",
 	"testimonials.play": "播放影片",
 	"testimonials.loading": "正在載入影片",
 	"testimonials.error": "影片無法載入。",

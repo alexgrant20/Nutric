@@ -1,6 +1,6 @@
 {
 	"nav.products": "产品",
-	"nav.testimonials": "客户见证",
+	"nav.testimonials": "视频",
 	"nav.accolades": "荣誉奖项",
 	"nav.news": "新闻",
 	"nav.about": "关于我们",
@@ -18,7 +18,7 @@
 	"collections.viewAll": "查看全部产品",
 	"about.title": "关于我们",
 	"about.more": "阅读关于我们",
-	"testimonials.title": "客户见证",
+	"testimonials.title": "视频",
 	"testimonials.play": "播放视频",
 	"testimonials.loading": "正在加载视频",
 	"testimonials.error": "视频无法加载。",

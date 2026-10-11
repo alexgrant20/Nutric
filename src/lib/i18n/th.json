@@ -1,6 +1,6 @@
 {
 	"nav.products": "ผลิตภัณฑ์",
-	"nav.testimonials": "เสียงจากลูกค้า",
+	"nav.testimonials": "วิดีโอ",
 	"nav.accolades": "รางวัล",
 	"nav.news": "ข่าวสาร",
 	"nav.about": "เกี่ยวกับเรา",
@@ -18,7 +18,7 @@
 	"collections.viewAll": "ดูผลิตภัณฑ์ทั้งหมด",
 	"about.title": "เกี่ยวกับเรา",
 	"about.more": "อ่านเกี่ยวกับเรา",
-	"testimonials.title": "เสียงจากลูกค้า",
+	"testimonials.title": "วิดีโอ",
 	"testimonials.play": "เล่นวิดีโอ",
 	"testimonials.loading": "กำลังโหลดวิดีโอ",
 	"testimonials.error": "ไม่สามารถโหลดวิดีโอได้",

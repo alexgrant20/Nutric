@@ -1,6 +1,6 @@
 {
 	"nav.products": "Produk",
-	"nav.testimonials": "Testimoni",
+	"nav.testimonials": "Video",
 	"nav.accolades": "Anugerah",
 	"nav.news": "Berita",
 	"nav.about": "Tentang",
@@ -18,7 +18,7 @@
 	"collections.viewAll": "Lihat semua produk",
 	"about.title": "Tentang kami",
 	"about.more": "Baca tentang kami",
-	"testimonials.title": "Testimoni",
+	"testimonials.title": "Video",
 	"testimonials.play": "Main video",
 	"testimonials.loading": "Memuatkan video",
 	"testimonials.error": "Video tidak dapat dimuatkan.",
