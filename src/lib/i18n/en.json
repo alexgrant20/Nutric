@@ -66,5 +66,7 @@
 	"coverflow.prev": "Previous product",
 	"coverflow.next": "Next product",
 	"coverflow.label": "Products in this collection",
-	"coverflow.count": "{n} of {total}"
+	"coverflow.count": "{n} of {total}",
+	"videos.prev": "Previous video",
+	"videos.next": "Next video"
 }

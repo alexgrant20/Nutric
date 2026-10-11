@@ -3,8 +3,8 @@
 	import { useT } from '$lib/i18n/context';
 	import Img from '../ui/Img.svelte';
 
-	let { videoId, title, poster = null, index = 0, total = 1 }: {
-		videoId: string; title: string; poster?: string | null; index?: number; total?: number;
+	let { videoId, title, poster = null, index = 0, total = 1, onplay }: {
+		videoId: string; title: string; poster?: string | null; index?: number; total?: number; onplay?: () => void;
 	} = $props();
 	const t = useT();
 	let phase: 'idle' | 'loading' | 'ready' | 'error' = $state('idle');
@@ -12,6 +12,7 @@
 
 	function start() {
 		phase = 'loading';
+		onplay?.();
 		timer = setTimeout(() => { if (phase === 'loading') phase = 'error'; }, 12000);
 	}
 	onDestroy(() => clearTimeout(timer));
@@ -27,16 +28,16 @@
 	{#if phase === 'idle' || phase === 'loading'}
 		<button onclick={start} disabled={phase === 'loading'} aria-label="{t('testimonials.play')}: {title}"
 			class="group absolute inset-0 block text-left text-cream-100">
-			<Img src={poster} alt="" class="absolute inset-0 size-full bg-forest-700 object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+			<Img src={poster} alt="" class="yt-poster absolute inset-0 size-full bg-forest-700 object-cover" />
 			<span class="poster-scrim absolute inset-0"></span>
 
-			<span class="absolute left-1/2 top-1/2 flex size-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-cream-100 text-forest-900 ring-8 ring-cream-100/25 transition-transform duration-200 group-hover:scale-105 sm:size-24" aria-hidden="true">
-				<svg viewBox="0 0 24 24" class="ml-1 size-8 sm:size-9"><path d="M7 4.5v15l13-7.5z" fill="currentColor" /></svg>
+			<span class="absolute left-1/2 top-[44%] flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-cream-100 text-forest-900 ring-4 ring-cream-100/25 transition-transform duration-200 group-hover:scale-105 sm:top-1/2 sm:size-20 sm:ring-8 lg:size-24" aria-hidden="true">
+				<svg viewBox="0 0 24 24" class="ml-0.5 size-6 sm:ml-1 sm:size-8 lg:size-9"><path d="M7 4.5v15l13-7.5z" fill="currentColor" /></svg>
 			</span>
 
-			<span class="absolute inset-x-0 bottom-0 block p-5 sm:p-8">
-				<span class="block text-sm tabular-nums text-cream-100/80">{t('videos.count', { n: index + 1, total })}</span>
-				<span class="mt-2 block max-w-[28ch] font-serif text-[clamp(1.35rem,3vw,2.5rem)] leading-tight sm:max-w-[36ch]">{title}</span>
+			<span class="yt-caption absolute inset-x-0 bottom-0 block p-3 sm:p-8">
+				<span class="hidden text-sm tabular-nums text-cream-100/80 sm:block">{t('videos.count', { n: index + 1, total })}</span>
+				<span class="block max-w-[28ch] font-serif text-[clamp(0.95rem,2.6vw+0.4rem,2.5rem)] leading-tight sm:mt-2 sm:max-w-[36ch]">{title}</span>
 				{#if phase === 'loading'}<span class="mt-3 block text-sm" role="status">{t('testimonials.loading')}</span>{/if}
 			</span>
 		</button>
@@ -49,3 +50,15 @@
 		</div>
 	{/if}
 </div>
+
+<style>
+	/* The poster, play button and caption sit at different depths: the pointer slides them against each other. */
+	:global(.yt-poster) {
+		transform: translate3d(calc(var(--px, 0) * -16px), calc(var(--py, 0) * -10px), 0) scale(1.1);
+		transition: transform 0.35s ease-out;
+	}
+	.yt-caption {
+		transform: translate3d(calc(var(--px, 0) * 12px), calc(var(--py, 0) * 8px), 0);
+		transition: transform 0.35s ease-out;
+	}
+</style>

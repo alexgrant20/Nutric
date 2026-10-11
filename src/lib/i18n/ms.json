@@ -66,5 +66,7 @@
 	"coverflow.prev": "Produk sebelumnya",
 	"coverflow.next": "Produk seterusnya",
 	"coverflow.label": "Produk dalam koleksi ini",
-	"coverflow.count": "{n} daripada {total}"
+	"coverflow.count": "{n} daripada {total}",
+	"videos.prev": "Video sebelumnya",
+	"videos.next": "Video seterusnya"
 }

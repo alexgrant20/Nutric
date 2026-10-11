@@ -66,5 +66,7 @@
 	"coverflow.prev": "ผลิตภัณฑ์ก่อนหน้า",
 	"coverflow.next": "ผลิตภัณฑ์ถัดไป",
 	"coverflow.label": "ผลิตภัณฑ์ในคอลเลกชันนี้",
-	"coverflow.count": "{n} จาก {total}"
+	"coverflow.count": "{n} จาก {total}",
+	"videos.prev": "วิดีโอก่อนหน้า",
+	"videos.next": "วิดีโอถัดไป"
 }

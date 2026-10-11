@@ -66,5 +66,7 @@
 	"coverflow.prev": "上一個產品",
 	"coverflow.next": "下一個產品",
 	"coverflow.label": "此系列的產品",
-	"coverflow.count": "第 {n} 個，共 {total} 個"
+	"coverflow.count": "第 {n} 個，共 {total} 個",
+	"videos.prev": "上一部影片",
+	"videos.next": "下一部影片"
 }
