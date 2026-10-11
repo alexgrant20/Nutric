@@ -77,7 +77,7 @@ collection_translations(collection_id FK, lang, name, tagline, description, bann
 products(slug UNIQUE, collection_id FK, main_image, gallery JSON[{path}], is_best_seller BOOL,
          is_published BOOL, sort_order)
 product_translations(product_id FK, lang, name, short_description, description_md,
-         benefits JSON[], ingredients_md, how_to_use_md, image_alt)  UNIQUE(product_id, lang)
+         benefits JSON[], ingredients_md, how_to_use_md, faqs JSON[{q,a}], regulatory_text NULL, image_alt)  UNIQUE(product_id, lang)
 
 news(slug UNIQUE, cover_image, event_date, location, status 'draft'|'published', published_at)
 news_translations(news_id FK, lang, title, excerpt, body_md, cover_alt)  UNIQUE(news_id, lang)
@@ -97,7 +97,7 @@ site_settings(singleton id=1:
    contact_email NULL, contact_phone NULL, whatsapp_url NULL, social_links JSON[{platform,url}],
    theme JSON{ colors, fonts, radius }  -- validated, section 14.2)
 site_settings_translations(lang, tagline, headline_line1, headline_line2, subheadline,
-   cta_label NULL, hero_badge_text NULL, about_teaser_md, about_image_alt, footer_note)
+   cta_label NULL, hero_badge_text NULL, about_teaser_md, about_md, about_image_alt, footer_note)
 
 subscribers(email UNIQUE, lang)
 admin_users(email UNIQUE, password_hash)
@@ -118,7 +118,7 @@ The admin is generated from one field-definition registry (section 14.1), not fi
 - Guard in `hooks.server.ts`: any `/admin/*` (except login) without a valid session redirects to login. Session 7 days, sliding.
 - `/admin`: dashboard with counts per type and latest drafts. Empty counts show the next action ("No news yet. Add the first event").
 - `/admin/{products|collections|news|testimonials|accolades}`: table list with thumbnail, name (EN), status, sort order, best-seller toggle (products), search, publish toggle, delete with confirm dialog.
-- `/admin/{type}/new` and `/admin/{type}/[id]`: edit form. Shared fields on top, then language tabs (EN, MS, ID, 中文, 繁中, ไทย) with a completeness dot per tab (dot = real state: complete or missing required fields). EN required, others optional. Markdown fields are textarea + live preview. Image upload with preview, jpg/png/webp up to 5 MB, stored at `static/uploads/{type}/{uuid}.{ext}`.
+- `/admin/{type}/new` and `/admin/{type}/[id]`: edit form. Shared fields on top, then language tabs (EN, MS, ID, 中文, 繁中, ไทย) with a completeness dot per tab (dot = real state: complete or missing required fields). EN required, others optional. Markdown fields are textarea + live preview. Image upload with preview, jpg/png/webp up to 5 MB, stored under `UPLOAD_DIR` (default `data/uploads/{type}/{uuid}.{ext}`) and served by a `/uploads/[...path]` route, because adapter-node does not serve files added to `static/` after the build.
 - `/admin/sections`: drag-to-reorder and enable/disable the landing sections (keyboard accessible: move up/down buttons). Shows which sections will auto-hide because they have no content.
 - `/admin/settings`: brand (name, logo, contact, socials), hero texts per language, hero media, theme tokens with live contrast check, tabs by group.
 - `/admin/subscribers`: list + CSV export.
@@ -127,7 +127,7 @@ The admin is generated from one field-definition registry (section 14.1), not fi
 
 ## 7. Content seeding
 
-1. `scripts/scrape.ts` (Playwright): visits nutric.com home, `/products`, collection pages, each product page, `/news` + each article, `/accolades`, `/about-us`; switches through the 6 languages; downloads images into `seed/images/`; writes `seed/data.json`. Also collects YouTube video IDs from the official channel or embedded videos.
+1. `scripts/scrape.ts` (Playwright + fetch): the source is an Angular app. Translated text for news and About Us is in `https://www.nutric.com/assets/i18n/{en,ms,id,zh,zh_tw,th}.json`. Product text and FAQs are rendered on `/products` in the selected language (language is stored in `localStorage.lang`), news cards on `/news`, accolades are images. The script downloads images into `seed/images/` and writes `seed/data.json`. It also records YouTube video IDs found in the source.
 2. `npm run seed`: runs migrations, wipes content tables, inserts from `seed/data.json`, copies images to `static/uploads/`, creates the admin user, creates default `page_sections`, sets BioSpray as best seller.
 3. Scraping runs once; the site never calls nutric.com at runtime. `seed/data.json` is committed so seeding is reproducible.
 4. The scraper records only what exists. A missing field stays `NULL`. It never fills gaps with generated text, and it never creates people, quotes, or figures.
@@ -313,7 +313,7 @@ Background tones are tied to the section key, not its position. Reordering in th
 
 ### 12.3 Navigation
 
-- The navbar items are produced from the enabled, non-empty landing sections: Products, Testimonials, Accolades, News, About. On the landing they are in-page anchors; on inner pages they link to `/[lang]#section`.
+- The navbar items are produced from the enabled, non-empty landing sections: Products, Testimonials, Accolades, News, About. Each links to that section's own page (`/[lang]/products`, `/testimonials`, `/accolades`, `/news`, `/about`), so every item has a real destination.
 - A section that is disabled or empty does not appear in the navbar or the footer. There is no manual nav editor, so there are no dead links (R-24).
 - The contact action in the navbar is a real `mailto:`, `tel:`, or WhatsApp link from settings, and does not render if none is set.
 - Skip-to-content link is the first focus stop.
@@ -340,7 +340,8 @@ Background tones are tied to the section key, not its position. Reordering in th
 - Seed data comes only from the scraper. No invented testimonials, names, avatars, statistics, awards, clients, or numbers. The landing has no stat strip and no "trusted by" logos.
 - Missing alt text, quotes, or translations are reported in `seed/REPORT.md` and flagged in the admin (completeness dot), not filled in.
 - Where a visitor-facing claim exists (the optional hero badge), the admin shows a note: "Only enter claims you can document."
-- No FAQ section ships in v1: there is no source content for one. Adding one later is a new content type.
+- No FAQ section on the landing. The source site has real per-product FAQs, which are shown as an accordion on the product detail page (the `faqs` field); products without FAQs show none.
+- Regulatory text from the source (registration number, advertisement approval code and expiry date) is stored verbatim in `regulatory_text` and shown on the product page. The seed report flags any approval whose expiry date is in the past (Q5).
 - Terms and Privacy pages are required before the newsletter form accepts addresses in production. The footer links only to pages that exist. Until they exist, the newsletter form is labeled "Coming soon" in production mode (`NODE_ENV=production` and no legal pages configured) and is fully functional in development (R-26).
 
 ---
@@ -414,4 +415,5 @@ Run before calling the UI done, and report each line with evidence:
 - **Q1.** Scraped Nutric copy may include health or benefit claims, buzzwords, and em dashes. It is stored verbatim as the brand's own text. Should the seed script leave it untouched (default), or should the owner review and edit it in the admin before launch?
 - **Q2.** Does Nutric have a real "100% natural/plant based"-style claim they can document for the hero badge? If not, the badge stays off.
 - **Q3.** Are there real testimonial videos or permission to feature people from Nutric's YouTube channel? If none are found, the testimonials section stays hidden until you add them.
+- **Q5.** The advertisement approval printed on the source product pages says "Advertisement Expiry Date: 31/12/2025", which has passed. Keep showing it verbatim, hide it, or have Nutric supply the renewed code?
 - **Q4.** Do Terms of Use and Privacy pages exist at nutric.com (the footer has a Terms link)? They will be scraped as simple pages if so.
