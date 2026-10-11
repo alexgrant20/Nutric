@@ -63,6 +63,7 @@ Codes: `en`, `ms`, `id`, `zh`, `zh-tw`, `th`. Default `en`. The enabled list liv
 | `/[lang]/testimonials` | All testimonials |
 | `/[lang]/accolades` | All accolades/certificates (lightbox) |
 | `/[lang]/about` | About page |
+| `/[lang]/terms` | Terms and privacy page (from `terms_md`, linked from the footer when present) |
 
 Detail-page compositions are in section 12.2. The navbar is generated from the sections that actually render (section 12.3), so it can never link to something missing.
 
@@ -97,7 +98,7 @@ site_settings(singleton id=1:
    contact_email NULL, contact_phone NULL, whatsapp_url NULL, social_links JSON[{platform,url}],
    theme JSON{ colors, fonts, radius }  -- validated, section 14.2)
 site_settings_translations(lang, tagline, headline_line1, headline_line2, subheadline,
-   cta_label NULL, hero_badge_text NULL, about_teaser_md, about_md, about_image_alt, footer_note)
+   cta_label NULL, hero_badge_text NULL, about_teaser_md, about_md, terms_md, about_image_alt, footer_note)
 
 subscribers(email UNIQUE, lang)
 admin_users(email UNIQUE, password_hash)
@@ -416,7 +417,8 @@ Run before calling the UI done, and report each line with evidence:
 - **Q5 resolved:** the advertisement approval text is shown as written, flagged in `seed/REPORT.md`.
 - **Q2 resolved in part:** the hero badge is wanted. The owner will supply the claim text, which goes in `seed/curated/hero-badge.json` per language (or the admin Settings page). Until it arrives the badge stays off.
 - **Q3 resolved:** if the YouTube channel has no clear customer testimonials, official Nutric brand videos (profile, events) are shown in the testimonials section under their real titles, and they are not presented as customer testimonials. The section keeps its name in the UI; see the open item below.
-- **Q4 still open:** whether Terms of Use and Privacy pages should be scraped.
+- **Q4 resolved:** scrape the Terms page from nutric.com (`/term-of-service`). Finding: it is NUTRIC INDONESIA's "Terms and conditions for online purchase" with a Privacy Policy section, so it describes a store this site does not have. It is stored verbatim as `terms_md`, flagged in the seed report, and Nutric must confirm or replace it before launch. Its Indonesia contact details are not used as the site contact.
+- **Hero badge:** placeholder text `[BADGE TEXT]` is seeded until the real claim arrives; it is flagged in the seed report.
 
 **Open item from Q3:** the UI label `testimonials.title` says Testimonials. If only brand videos are used, rename the section label to "Videos" (dictionary change in six languages) so the page does not imply customer reviews. Decide when the videos are known.
 

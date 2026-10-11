@@ -502,6 +502,7 @@ export const siteSettingsTranslations = sqliteTable(
 		heroBadgeText: text('hero_badge_text'),
 		aboutTeaserMd: text('about_teaser_md'),
 		aboutMd: text('about_md'),
+		termsMd: text('terms_md'),
 		aboutImageAlt: text('about_image_alt'),
 		footerNote: text('footer_note')
 	}
@@ -820,7 +821,8 @@ export function t(lang: Lang, key: DictKey, vars?: Record<string, string | numbe
 	"newsletter.unavailable": "Coming soon",
 	"footer.sections": "On this site",
 	"footer.contact": "Contact",
-	"footer.follow": "Follow us"
+	"footer.follow": "Follow us",
+	"footer.terms": "Terms of use and privacy"
 }
 ```
 
@@ -887,7 +889,8 @@ export function t(lang: Lang, key: DictKey, vars?: Record<string, string | numbe
 	"newsletter.unavailable": "Akan datang",
 	"footer.sections": "Di laman ini",
 	"footer.contact": "Hubungi",
-	"footer.follow": "Ikuti kami"
+	"footer.follow": "Ikuti kami",
+	"footer.terms": "Terma penggunaan dan privasi"
 }
 ```
 
@@ -954,7 +957,8 @@ export function t(lang: Lang, key: DictKey, vars?: Record<string, string | numbe
 	"newsletter.unavailable": "Segera hadir",
 	"footer.sections": "Di situs ini",
 	"footer.contact": "Kontak",
-	"footer.follow": "Ikuti kami"
+	"footer.follow": "Ikuti kami",
+	"footer.terms": "Syarat penggunaan dan privasi"
 }
 ```
 
@@ -1021,7 +1025,8 @@ export function t(lang: Lang, key: DictKey, vars?: Record<string, string | numbe
 	"newsletter.unavailable": "即将推出",
 	"footer.sections": "本站内容",
 	"footer.contact": "联系方式",
-	"footer.follow": "关注我们"
+	"footer.follow": "关注我们",
+	"footer.terms": "使用条款与隐私"
 }
 ```
 
@@ -1088,7 +1093,8 @@ export function t(lang: Lang, key: DictKey, vars?: Record<string, string | numbe
 	"newsletter.unavailable": "即將推出",
 	"footer.sections": "本站內容",
 	"footer.contact": "聯絡方式",
-	"footer.follow": "追蹤我們"
+	"footer.follow": "追蹤我們",
+	"footer.terms": "使用條款與隱私"
 }
 ```
 
@@ -1155,7 +1161,8 @@ export function t(lang: Lang, key: DictKey, vars?: Record<string, string | numbe
 	"newsletter.unavailable": "เร็วๆ นี้",
 	"footer.sections": "ในเว็บไซต์นี้",
 	"footer.contact": "ติดต่อ",
-	"footer.follow": "ติดตามเรา"
+	"footer.follow": "ติดตามเรา",
+	"footer.terms": "ข้อกำหนดการใช้งานและความเป็นส่วนตัว"
 }
 ```
 
@@ -2282,6 +2289,7 @@ git add -A && git commit -m "feat: admin auth, sessions, rate limit, hooks, lang
 - Collections are the three series pages `/revolutic`, `/vitanetic`, `/skinetique` with banners `assets/images/{name}-banner.png`. A product belongs to the collection whose brand name starts its English name (`Revolutic`, `Vitanetic`, `Skinetique`).
 - Hero video: `/assets/home.mp4`. Logo: `/assets/images/NUTRIC_Logo.png`. Socials: facebook.com/nutric.corporate, instagram.com/nutric.official, youtube.com/c/nutricofficial.
 - Accolades: images on `/accolades` (no text).
+- Terms: `/term-of-service` (English page "Terms and conditions for online purchase" for NUTRIC INDONESIA, with a Privacy Policy section; the legal text sits in `div.container` containing `p.MsoNormal`). It also lists Indonesia contact details (info.id@nutric.com and a +62 phone). Those are country-specific, so they are NOT seeded as the site contact; the owner enters contact details in the admin.
 
 **Interfaces:**
 - Produces: `SeedData` (below) written to `seed/data.json`. Image fields hold a **file name** inside `seed/images/`.
@@ -2308,7 +2316,7 @@ export interface SeedData {
 		t: Tr<{
 			tagline: string | null; headlineLine1: string | null; headlineLine2: string | null;
 			subheadline: string | null; ctaLabel: string | null; heroBadgeText: string | null;
-			aboutTeaserMd: string | null; aboutMd: string | null; aboutImageAlt: string | null; footerNote: string | null;
+			aboutTeaserMd: string | null; aboutMd: string | null; termsMd: string | null; aboutImageAlt: string | null; footerNote: string | null;
 		}>;
 	};
 	collections: {
@@ -2675,9 +2683,19 @@ async function main() {
 		const aboutMd = aboutToMarkdown(about);
 		settingsT[l] = {
 			tagline: null, headlineLine1: null, headlineLine2: null, subheadline: null, ctaLabel: null, heroBadgeText: null,
-			aboutTeaserMd: about['NUTRIC-1'] ?? null, aboutMd, aboutImageAlt: null, footerNote: null
+			aboutTeaserMd: about['NUTRIC-1'] ?? null, aboutMd, termsMd: null, aboutImageAlt: null, footerNote: null
 		};
 	}
+	// Terms and privacy text from /term-of-service, per language, stored verbatim.
+	for (const l of langs) {
+		await openIn(page, '/term-of-service', l);
+		const html = await page.locator('div.container:has(p.MsoNormal)').first().innerHTML().catch(() => '');
+		const md = htmlToMarkdown(html.replace(/<!---->/g, '').replace(/ _ng\w+-c\d+=""/g, ''));
+		settingsT[l]!.termsMd = md || null;
+		if (!md) note(`terms (${l}): page text not found`);
+	}
+	note('terms: the source page is "Terms and conditions for online purchase" for NUTRIC INDONESIA (PT I Link Age International Indonesia) and includes a Privacy Policy section; it is stored verbatim as the site terms page, but it describes an online store this site does not have. Nutric should confirm or replace it before launch');
+
 	// Hero copy from the source home page (English), then the translated product taglines per language.
 	await openIn(page, '/', 'en');
 	const homeLine = (await page.locator('body').innerText()).split('\n').map((x) => x.trim()).find((x) => /regenerative healthcare/i.test(x));
@@ -2726,10 +2744,14 @@ function loadCuratedTestimonials(): SeedData['testimonials'] {
 function htmlToMarkdown(html: string): string {
 	return html
 		.replace(/<br\s*\/?>/g, '\n')
-		.replace(/<\/p>\s*<p>/g, '\n\n')
-		.replace(/<b>(.*?)<\/b>|<strong>(.*?)<\/strong>/g, (_, a, b) => `**${a ?? b}**`)
+		.replace(/<\/(p|div|h[1-6])>/g, '\n\n')
+		.replace(/<li[^>]*>/g, '- ')
+		.replace(/<\/li>/g, '\n')
+		.replace(/<(b|strong)[^>]*>([\s\S]*?)<\/\1>/g, '**$2**')
 		.replace(/<[^>]+>/g, '')
 		.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+		.replace(/[ \t]+\n/g, '\n')
+		.replace(/\n{3,}/g, '\n\n')
 		.trim();
 }
 
@@ -2757,9 +2779,23 @@ Create `seed/curated/testimonials.json` as `[]`. Then open `https://www.youtube.
 
 Add `personName`, `role`, `quote` only if the video page or description states them. Owner decision (2026-10-11): if the channel has no clear customer testimonials, use official Nutric brand videos (profile, events) with their exact YouTube titles, no `personName`, no `quote`, and tell the user which kind you used. If brand videos are used, rename the `testimonials.title` and `nav.testimonials` dictionary values to a neutral word for "Videos" in all six languages so the UI does not imply customer reviews (the dictionary parity test still passes). Verify each ID with `youtubeId()` from `src/lib/youtube.ts` before saving.
 
-- [ ] **Step 7b: Hero badge text (owner-supplied)**
+- [ ] **Step 7b: Hero badge text (placeholder for now)**
 
-The owner wants the hero badge and will supply the claim text. Create `seed/curated/hero-badge.json` as `{ "en": "" }` plus any of `ms`, `id`, `zh`, `zh-tw`, `th` the owner provides. In `scripts/scrape.ts` read this file if it exists and set `settingsT[l].heroBadgeText` from it (empty string or missing key means `null`). Never write a badge text that the owner did not give.
+Owner decision (2026-10-11): use dummy text for the hero badge until the real claim is known. It must read as a placeholder (antislop R-23, R-38), never as a believable claim. Create `seed/curated/hero-badge.json`:
+
+```json
+{ "en": "[BADGE TEXT]" }
+```
+
+In `scripts/scrape.ts`, after `settingsT` is filled, add:
+
+```ts
+	const badge: Partial<Record<SeedLang, string>> = existsSync('seed/curated/hero-badge.json')
+		? JSON.parse(readFileSync('seed/curated/hero-badge.json', 'utf8'))
+		: {};
+	for (const l of langs) settingsT[l]!.heroBadgeText = badge[l] ?? badge.en ?? null;
+	if (badge.en?.startsWith('[')) note('hero badge: PLACEHOLDER text "' + badge.en + '"; replace it in Admin > Settings > Texts by language, or clear it to hide the badge');
+```
 
 - [ ] **Step 8: Run the scraper and review the output**
 
@@ -2802,7 +2838,7 @@ const data: SeedData = {
 	settings: {
 		brandName: 'B', logoImage: 'logo.png', heroMedia: null, heroMediaType: 'image', heroProductImage: null,
 		contactEmail: null, contactPhone: null, whatsappUrl: null, socialLinks: [],
-		t: { en: { tagline: null, headlineLine1: 'A', headlineLine2: 'B', subheadline: null, ctaLabel: null, heroBadgeText: null, aboutTeaserMd: 'About', aboutMd: null, aboutImageAlt: null, footerNote: null } }
+		t: { en: { tagline: null, headlineLine1: 'A', headlineLine2: 'B', subheadline: null, ctaLabel: null, heroBadgeText: null, aboutTeaserMd: 'About', aboutMd: null, termsMd: null, aboutImageAlt: null, footerNote: null } }
 	},
 	collections: [{ slug: 'c', bannerImage: null, sortOrder: 0, t: { en: { name: 'C', tagline: null, description: null, bannerAlt: null } } }],
 	products: [
@@ -3542,7 +3578,10 @@ export const load = ({ params }) => {
 			{/if}
 		</div>
 	</div>
-	<p class="border-t border-cream-100/15 px-4 py-4 text-center text-sm text-cream-100/70">&copy; {new Date().getFullYear()} {settings?.brandName}</p>
+	<div class="flex flex-wrap items-center justify-center gap-x-6 border-t border-cream-100/15 px-4 py-2 text-sm text-cream-100/70">
+		<p class="py-2">&copy; {new Date().getFullYear()} {settings?.brandName}</p>
+		{#if settings?.t?.termsMd}<a href="/{lang}/terms" class="inline-flex min-h-11 items-center underline">{t('footer.terms')}</a>{/if}
+	</div>
 </footer>
 ```
 
@@ -4246,7 +4285,7 @@ Run `npm run dev` and open `/en`. Check, at 1280 px and 360 px: hero headline si
 ### Task 12: Detail and list pages
 
 **Files:**
-- Create under `src/routes/[lang=lang]/`: `products/+page.server.ts`, `products/+page.svelte`, `products/[slug]/+page.server.ts`, `products/[slug]/+page.svelte`, `collections/[slug]/+page.server.ts`, `collections/[slug]/+page.svelte`, `news/+page.server.ts`, `news/+page.svelte`, `news/[slug]/+page.server.ts`, `news/[slug]/+page.svelte`, `testimonials/+page.server.ts`, `testimonials/+page.svelte`, `accolades/+page.server.ts`, `accolades/+page.svelte`, `about/+page.server.ts`, `about/+page.svelte`
+- Create under `src/routes/[lang=lang]/`: `products/+page.server.ts`, `products/+page.svelte`, `products/[slug]/+page.server.ts`, `products/[slug]/+page.svelte`, `collections/[slug]/+page.server.ts`, `collections/[slug]/+page.svelte`, `news/+page.server.ts`, `news/+page.svelte`, `news/[slug]/+page.server.ts`, `news/[slug]/+page.svelte`, `testimonials/+page.server.ts`, `testimonials/+page.svelte`, `accolades/+page.server.ts`, `accolades/+page.svelte`, `about/+page.server.ts`, `about/+page.svelte`, `terms/+page.server.ts`, `terms/+page.svelte`
 - Test: automated in Task 15; unit logic already covered in Task 5
 
 **Interfaces:**
@@ -4678,6 +4717,41 @@ export const load = ({ params }) => {
 
 <div class="mx-auto max-w-4xl px-4 pb-24 pt-28 sm:px-6">
 	<h1 class="font-serif text-4xl text-forest-700 sm:text-5xl">{t('about.title')}</h1>
+	<div class="prose-md mt-8">{@html data.html}</div>
+</div>
+```
+
+- [ ] **Step 5b: Terms page**
+
+`terms/+page.server.ts`:
+
+```ts
+import { error } from '@sveltejs/kit';
+import { db } from '$lib/server/db/instance';
+import { getSettings } from '$lib/server/content';
+import { renderMarkdown } from '$lib/server/markdown';
+import type { Lang } from '$lib/i18n/config';
+
+export const load = ({ params }) => {
+	const md = getSettings(db, params.lang as Lang)?.t?.termsMd;
+	if (!md) throw error(404);
+	return { html: renderMarkdown(md) };
+};
+```
+
+`terms/+page.svelte`:
+
+```svelte
+<script lang="ts">
+	import { useT } from '$lib/i18n/context';
+	let { data } = $props();
+	const t = useT();
+</script>
+
+<svelte:head><title>{t('footer.terms')}</title></svelte:head>
+
+<div class="mx-auto max-w-4xl px-4 pb-24 pt-28 sm:px-6">
+	<h1 class="font-serif text-4xl text-forest-700 sm:text-5xl">{t('footer.terms')}</h1>
 	<div class="prose-md mt-8">{@html data.html}</div>
 </div>
 ```
@@ -5934,7 +6008,7 @@ const t = (fd: FormData, k: string) => {
 	const v = String(fd.get(k) ?? '').trim();
 	return v === '' ? null : v;
 };
-const TR_FIELDS = ['tagline', 'headlineLine1', 'headlineLine2', 'subheadline', 'ctaLabel', 'heroBadgeText', 'aboutTeaserMd', 'aboutMd', 'aboutImageAlt', 'footerNote'] as const;
+const TR_FIELDS = ['tagline', 'headlineLine1', 'headlineLine2', 'subheadline', 'ctaLabel', 'heroBadgeText', 'aboutTeaserMd', 'aboutMd', 'termsMd', 'aboutImageAlt', 'footerNote'] as const;
 export type SettingsTr = Record<(typeof TR_FIELDS)[number], string | null>;
 
 export function readSettingsForm(fd: FormData) {
@@ -6168,7 +6242,7 @@ export const actions = {
 		['tagline', 'Tagline', false], ['headlineLine1', 'Hero headline, left part', false], ['headlineLine2', 'Hero headline, right part', false],
 		['subheadline', 'Hero subheadline', true], ['ctaLabel', 'Hero button label (leave empty for the default)', false],
 		['heroBadgeText', 'Hero badge text (leave empty for no badge; only enter a claim you can document)', false],
-		['aboutTeaserMd', 'About teaser (Markdown)', true], ['aboutMd', 'About page (Markdown)', true], ['aboutImageAlt', 'About image description', false], ['footerNote', 'Footer note', true]
+		['aboutTeaserMd', 'About teaser (Markdown)', true], ['aboutMd', 'About page (Markdown)', true], ['termsMd', 'Terms and privacy page (Markdown)', true], ['aboutImageAlt', 'About image description', false], ['footerNote', 'Footer note', true]
 	];
 	const complete = $derived(Object.fromEntries(data.languages.map((l: any) => [l.code, !!data.trs[l.code]])));
 </script>
@@ -6467,6 +6541,13 @@ test('newsletter accepts an address, then reports a duplicate', async ({ page })
 	await page.getByLabel('Email address').fill('not-an-email');
 	await page.getByRole('button', { name: 'Subscribe to event updates' }).click();
 	await expect(page.getByText('Enter a valid email address.')).toBeVisible();
+});
+
+test('terms page loads and the footer links to it', async ({ page }) => {
+	await page.goto('/en');
+	await page.getByRole('link', { name: 'Terms of use and privacy' }).click();
+	await expect(page).toHaveURL(/\/en\/terms$/);
+	await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 });
 
 test('uploads route blocks path traversal', async ({ request }) => {
