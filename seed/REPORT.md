@@ -1,6 +1,6 @@
 # Seed report
 
-Generated 2026-10-11T12:07:31.611Z
+Generated 2026-10-11T12:09:16.241Z
 
 ## Counts
 - products: 12
@@ -33,7 +33,8 @@ Generated 2026-10-11T12:07:31.611Z
 - product "Vitanetic® Phyto Complex": no FAQs found
 - product "Vitanetic® Green Mix": no FAQs found
 - product "Vitanetic® Collaglo": no FAQs found
-- accolades: 16 images found; the year is read from the image file name (for example 2018-1.png) and is unverified; titles and issuers are NOT on the source site, fill them in the admin
+- product "Skinetique® Nanobelle® Eye Lift +  Collagen Regeneration Intensive Vitality Serum": no FAQs found
+- accolades: 16 images found; titles, years and issuers are NOT on the source site, fill them in the admin
 - terms: the source page is "Terms and conditions for online purchase" for NUTRIC INDONESIA (PT I Link Age International Indonesia) and includes a Privacy Policy section; it is stored verbatim as the site terms page, but it describes an online store this site does not have. Nutric should confirm or replace it before launch
 - settings: hero headline lines are NOT on the source site as two separate lines; set them in the admin (Settings > Hero)
 - settings: contact email/phone/WhatsApp not collected; add them in the admin to enable the contact buttons

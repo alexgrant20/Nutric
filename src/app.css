@@ -1,0 +1,89 @@
+@import 'tailwindcss';
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/fraunces/500.css';
+@import '@fontsource/noto-sans-sc/400.css';
+@import '@fontsource/noto-sans-sc/600.css';
+@import '@fontsource/noto-sans-tc/400.css';
+@import '@fontsource/noto-sans-tc/600.css';
+@import '@fontsource/noto-sans-thai/400.css';
+@import '@fontsource/noto-sans-thai/600.css';
+@import '@fontsource/noto-serif-sc/500.css';
+@import '@fontsource/noto-serif-tc/500.css';
+@import '@fontsource/noto-serif-thai/500.css';
+
+@theme inline {
+	--color-forest-900: var(--forest-900);
+	--color-forest-700: var(--forest-700);
+	--color-cream-100: var(--cream-100);
+	--color-ink-900: var(--ink-900);
+	--color-stone-600: var(--stone-600);
+	--color-lime-400: var(--lime-400);
+	--radius-sm: var(--r-sm);
+	--radius-md: var(--r-md);
+	--font-sans: var(--font-sans-stack);
+	--font-serif: var(--font-serif-stack);
+}
+
+:root {
+	--font-sans-stack: var(--font-latin-sans), system-ui, sans-serif;
+	--font-serif-stack: var(--font-latin-serif), Georgia, serif;
+}
+:lang(zh) {
+	--font-sans-stack: var(--font-latin-sans), 'Noto Sans SC', system-ui, sans-serif;
+	--font-serif-stack: var(--font-latin-serif), 'Noto Serif SC', serif;
+	line-break: strict;
+}
+:lang(zh-TW) {
+	--font-sans-stack: var(--font-latin-sans), 'Noto Sans TC', system-ui, sans-serif;
+	--font-serif-stack: var(--font-latin-serif), 'Noto Serif TC', serif;
+	line-break: strict;
+}
+:lang(th) {
+	--font-sans-stack: var(--font-latin-sans), 'Noto Sans Thai', system-ui, sans-serif;
+	--font-serif-stack: var(--font-latin-serif), 'Noto Serif Thai', serif;
+	overflow-wrap: anywhere;
+}
+
+@layer base {
+	body {
+		background: var(--cream-100);
+		color: var(--ink-900);
+		font-family: var(--font-sans-stack);
+		font-size: 1rem;
+		line-height: 1.65;
+	}
+	h1, h2, h3 { line-height: 1.15; }
+	:focus-visible { outline: 2px solid var(--forest-700); outline-offset: 3px; }
+	.on-dark :focus-visible { outline-color: var(--lime-400); }
+	img, video { max-width: 100%; height: auto; }
+}
+
+.prose-md { max-width: 68ch; }
+.prose-md p { margin-block: 1em; }
+.prose-md h2 { font-size: 1.5rem; margin-block: 1.6em 0.6em; font-weight: 600; }
+.prose-md h3 { font-size: 1.2rem; margin-block: 1.4em 0.5em; font-weight: 600; }
+.prose-md ul { list-style: disc; padding-left: 1.4em; margin-block: 1em; }
+.prose-md ol { list-style: decimal; padding-left: 1.4em; margin-block: 1em; }
+.prose-md a { text-decoration: underline; text-underline-offset: 3px; }
+
+.hero-scrim {
+	background: linear-gradient(
+		to bottom,
+		color-mix(in srgb, var(--forest-900) 60%, transparent),
+		color-mix(in srgb, var(--forest-900) 40%, transparent) 45%,
+		color-mix(in srgb, var(--forest-900) 78%, transparent)
+	);
+}
+.hero-media { animation: hero-settle 1.2s ease-out both; }
+@keyframes hero-settle { from { transform: scale(1.04); } to { transform: none; } }
+
+.js .reveal { opacity: 0; transform: translateY(12px); transition: opacity 0.3s ease, transform 0.3s ease; }
+.js .reveal.is-visible { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+	.hero-media { animation: none; }
+	.js .reveal { transform: none; transition: opacity 0.2s ease; }
+	html { scroll-behavior: auto; }
+}
