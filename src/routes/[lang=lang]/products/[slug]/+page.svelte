@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import { useT } from '$lib/i18n/context';
 	import Img from '$lib/components/ui/Img.svelte';
+	import { tilt } from '$lib/components/ui/motion';
 	import ProductCard from '$lib/components/site/ProductCard.svelte';
 	let { data } = $props();
 	const t = useT();
@@ -16,8 +17,9 @@
 <div class="mx-auto max-w-7xl px-4 pb-24 pt-28 sm:px-6">
 	<div class="grid gap-10 lg:grid-cols-2">
 		<div>
-			<div class="rounded-md bg-white p-6">
-				<Img src={images[activeImage] ?? null} alt={p.t.imageAlt ?? p.t.name} loading="eager" class="mx-auto aspect-square w-full object-contain" />
+			<div class="relative rounded-md bg-white p-6" use:tilt={{ max: 8 }}>
+				<Img src={images[activeImage] ?? null} alt={p.t.imageAlt ?? p.t.name} loading="eager" class="detail-pack mx-auto aspect-square w-full object-contain" />
+				<div class="contact-shadow" aria-hidden="true"></div>
 			</div>
 			{#if images.length > 1}
 				<ul class="mt-3 flex gap-2">
@@ -78,3 +80,10 @@
 		</section>
 	{/if}
 </div>
+
+<style>
+	:global(.detail-pack) {
+		transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+		transition: transform 0.3s ease-out;
+	}
+</style>

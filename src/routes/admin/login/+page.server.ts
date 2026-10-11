@@ -1,12 +1,13 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { dev } from '$app/env';
+import { LOGIN_MAX_ATTEMPTS } from '$app/env/private';
 import { db } from '$lib/server/db/instance';
 import { createSession, SESSION_DAYS } from '$lib/server/auth';
 import { tryLogin } from '$lib/server/login';
 import { RateLimiter } from '$lib/server/rate-limit';
 import type { Actions, PageServerLoad } from './$types';
 
-const limiter = new RateLimiter(5, 15 * 60_000);
+const limiter = new RateLimiter(LOGIN_MAX_ATTEMPTS, 15 * 60_000);
 
 export const load: PageServerLoad = ({ locals }) => {
 	if (locals.user) throw redirect(303, '/admin');

@@ -59,7 +59,8 @@ export const ENTITIES: Record<EntityKey, Entity> = {
 		key: 'collections', label: 'Collections', singular: 'collection', table: s.collections, trTable: s.collectionTranslations, fk: 'collectionId',
 		titleField: 'name', imageField: 'bannerImage', publish: null, slugFrom: 'name', order: 'sort',
 		fields: [
-			{ name: 'bannerImage', label: 'Banner image', type: 'image' }, sortOrder,
+			{ name: 'bannerImage', label: 'Mood photo (banner)', type: 'image' },
+			{ name: 'logoImage', label: 'Wordmark logo', type: 'image' }, sortOrder,
 			{ name: 'name', label: 'Name', type: 'text', translatable: true, required: true },
 			{ name: 'tagline', label: 'Tagline', type: 'text', translatable: true },
 			{ name: 'description', label: 'Description', type: 'textarea', translatable: true },

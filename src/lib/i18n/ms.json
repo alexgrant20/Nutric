@@ -62,5 +62,9 @@
 	"footer.terms": "Terma penggunaan dan privasi",
 	"videos.nowShowing": "Sedang ditayangkan",
 	"videos.all": "Semua video",
-	"videos.count": "Video {n} daripada {total}"
+	"videos.count": "Video {n} daripada {total}",
+	"coverflow.prev": "Produk sebelumnya",
+	"coverflow.next": "Produk seterusnya",
+	"coverflow.label": "Produk dalam koleksi ini",
+	"coverflow.count": "{n} daripada {total}"
 }

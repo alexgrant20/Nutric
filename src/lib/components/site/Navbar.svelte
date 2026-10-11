@@ -9,12 +9,13 @@
 		languages: any[]; contact: string | null; overHero: boolean; pathRest: string;
 	} = $props();
 	const t = useT();
-	let scrolled = $state(false);
+	let scrollY = $state(0);
 	let menu: HTMLDialogElement | undefined = $state();
-	const solid = $derived(scrolled || !overHero);
+	// bind:scrollY also reports the restored position after a reload or an anchor jump, so the bar is never transparent over a light section.
+	const solid = $derived(scrollY > 80 || !overHero);
 </script>
 
-<svelte:window onscroll={() => (scrolled = window.scrollY > 80)} />
+<svelte:window bind:scrollY />
 
 <header class="on-dark fixed inset-x-0 top-0 z-40 text-cream-100 transition-colors duration-200 {solid ? 'bg-forest-900' : 'bg-transparent'}">
 	<div class="mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 sm:px-6">

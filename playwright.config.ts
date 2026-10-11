@@ -13,7 +13,8 @@ export default defineConfig({
 			PORT: '4173', SITE_ORIGIN: 'http://localhost:4173',
 			DATABASE_PATH: 'data/e2e.db', UPLOAD_DIR: 'data/e2e-uploads',
 			ADMIN_EMAIL: 'e2e@example.com', ADMIN_PASSWORD: 'e2e-password-123456',
-			NEWSLETTER_ENABLED: 'true'
+			NEWSLETTER_ENABLED: 'true',
+			LOGIN_MAX_ATTEMPTS: '1000'
 		}
 	}
 });

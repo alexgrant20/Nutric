@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-11T12:14:38.598Z",
+  "generatedAt": "2026-10-11T14:49:08.193Z",
   "settings": {
     "brandName": "Nutric",
     "logoImage": "NUTRIC_Logo.png",
@@ -107,7 +107,8 @@
   "collections": [
     {
       "slug": "revolutic",
-      "bannerImage": "revolutic-banner.png",
+      "bannerImage": "mood-revolutic.jpg",
+      "logoImage": "revolutic-banner.png",
       "sortOrder": 0,
       "t": {
         "en": {
@@ -150,7 +151,8 @@
     },
     {
       "slug": "vitanetic",
-      "bannerImage": "vitanetic-banner.png",
+      "bannerImage": "mood-vitanetic.jpg",
+      "logoImage": "vitanetic-banner.png",
       "sortOrder": 1,
       "t": {
         "en": {
@@ -193,7 +195,8 @@
     },
     {
       "slug": "skinetique",
-      "bannerImage": "skinetique-banner.png",
+      "bannerImage": null,
+      "logoImage": "skinetique-banner.png",
       "sortOrder": 2,
       "t": {
         "en": {
@@ -2606,131 +2609,131 @@
       "personName": null,
       "role": null,
       "youtubeUrl": "https://www.youtube.com/watch?v=r7pG1quQZX8",
+      "posterImage": "yt-r7pG1quQZX8.jpg",
       "sortOrder": 0,
       "t": {
         "en": {
           "title": "Nutric Corporate Story",
           "quote": null
         }
-      },
-      "posterImage": "yt-r7pG1quQZX8.jpg"
+      }
     },
     {
       "personName": null,
       "role": null,
       "youtubeUrl": "https://www.youtube.com/watch?v=2he5OH5AUfA",
+      "posterImage": "yt-2he5OH5AUfA.jpg",
       "sortOrder": 1,
       "t": {
         "en": {
           "title": "Uplifting Lives - Ms. Lim Bee Hong",
           "quote": null
         }
-      },
-      "posterImage": "yt-2he5OH5AUfA.jpg"
+      }
     },
     {
       "personName": null,
       "role": null,
       "youtubeUrl": "https://www.youtube.com/watch?v=DckjjEPaBM8",
+      "posterImage": "yt-DckjjEPaBM8.jpg",
       "sortOrder": 2,
       "t": {
         "en": {
           "title": "Uplifting Lives - Mr. Peter Lee",
           "quote": null
         }
-      },
-      "posterImage": "yt-DckjjEPaBM8.jpg"
+      }
     },
     {
       "personName": null,
       "role": null,
       "youtubeUrl": "https://www.youtube.com/watch?v=YxW5yoimTQc",
+      "posterImage": "yt-YxW5yoimTQc.jpg",
       "sortOrder": 3,
       "t": {
         "en": {
           "title": "Uplifting Lives - Jackson Liew",
           "quote": null
         }
-      },
-      "posterImage": "yt-YxW5yoimTQc.jpg"
+      }
     },
     {
       "personName": null,
       "role": null,
       "youtubeUrl": "https://www.youtube.com/watch?v=BX7k3UmM7ts",
+      "posterImage": "yt-BX7k3UmM7ts.jpg",
       "sortOrder": 4,
       "t": {
         "en": {
           "title": "Uplifting Lives - Mr. Lee Cheng Tong",
           "quote": null
         }
-      },
-      "posterImage": "yt-BX7k3UmM7ts.jpg"
+      }
     },
     {
       "personName": null,
       "role": null,
       "youtubeUrl": "https://www.youtube.com/watch?v=Ap8Wx4l1I-o",
+      "posterImage": "yt-Ap8Wx4l1I-o.jpg",
       "sortOrder": 5,
       "t": {
         "en": {
           "title": "Uplifting Lives - Ms. Jenny Chong",
           "quote": null
         }
-      },
-      "posterImage": "yt-Ap8Wx4l1I-o.jpg"
+      }
     },
     {
       "personName": null,
       "role": null,
       "youtubeUrl": "https://www.youtube.com/watch?v=HnGIBw8G2FE",
+      "posterImage": "yt-HnGIBw8G2FE.jpg",
       "sortOrder": 6,
       "t": {
         "en": {
           "title": "Uplifting Lives - Madam Cheong",
           "quote": null
         }
-      },
-      "posterImage": "yt-HnGIBw8G2FE.jpg"
+      }
     },
     {
       "personName": null,
       "role": null,
       "youtubeUrl": "https://www.youtube.com/watch?v=PfPVYYdxib8",
+      "posterImage": "yt-PfPVYYdxib8.jpg",
       "sortOrder": 7,
       "t": {
         "en": {
           "title": "Uplifting Lives - Mr. Young Boon Teik",
           "quote": null
         }
-      },
-      "posterImage": "yt-PfPVYYdxib8.jpg"
+      }
     },
     {
       "personName": null,
       "role": null,
       "youtubeUrl": "https://www.youtube.com/watch?v=02Z22VUbM2k",
+      "posterImage": "yt-02Z22VUbM2k.jpg",
       "sortOrder": 8,
       "t": {
         "en": {
           "title": "Uplifting Lives - Mr. Robert Lim",
           "quote": null
         }
-      },
-      "posterImage": "yt-02Z22VUbM2k.jpg"
+      }
     },
     {
       "personName": null,
       "role": null,
       "youtubeUrl": "https://www.youtube.com/watch?v=CJpfTgA_jhs",
+      "posterImage": "yt-CJpfTgA_jhs.jpg",
       "sortOrder": 9,
       "t": {
         "en": {
           "title": "Revolutic® BioSpray® and BioSpray® Plus",
           "quote": null
         }
-      },
-      "posterImage": "yt-CJpfTgA_jhs.jpg"
+      }
     }
   ]
 }

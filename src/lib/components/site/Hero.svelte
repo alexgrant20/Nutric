@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { useT } from '$lib/i18n/context';
 	import Img from '../ui/Img.svelte';
+	import { scrollProgress, tilt } from '../ui/motion';
 	let { lang, settings, bestSeller, testimonial }: { lang: string; settings: any; bestSeller: any; testimonial: any } = $props();
 	const t = useT();
 	const tr = $derived(settings?.t);
@@ -27,33 +28,39 @@
 	}
 </script>
 
-<section id="hero" class="on-dark relative isolate flex min-h-[100svh] flex-col overflow-hidden text-cream-100">
-	{#if settings?.heroMedia && settings.heroMediaType === 'video'}
-		<video bind:this={video} class="hero-media absolute inset-0 -z-20 size-full object-cover" src={settings.heroMedia} autoplay muted loop playsinline preload="metadata"></video>
-	{:else if settings?.heroMedia}
-		<img src={settings.heroMedia} alt="" class="hero-media absolute inset-0 -z-20 size-full object-cover" />
-	{:else}
-		<div class="absolute inset-0 -z-20 bg-forest-700"></div>
-	{/if}
+<section id="hero" use:tilt={{ max: 6 }} use:scrollProgress={{ mode: 'leave' }} class="on-dark relative isolate flex min-h-[100svh] flex-col overflow-hidden text-cream-100">
+	<div class="depth-plane absolute inset-0 -z-20">
+		{#if settings?.heroMedia && settings.heroMediaType === 'video'}
+			<video bind:this={video} class="hero-media size-full object-cover" src={settings.heroMedia} autoplay muted loop playsinline preload="metadata"></video>
+		{:else if settings?.heroMedia}
+			<img src={settings.heroMedia} alt="" class="hero-media size-full object-cover" />
+		{:else}
+			<div class="size-full bg-forest-700"></div>
+		{/if}
+	</div>
 	<div class="hero-scrim absolute inset-0 -z-10"></div>
+	<div class="hero-floor absolute inset-x-0 bottom-0 -z-10 h-[38%]" aria-hidden="true"></div>
 
 	<div class="flex flex-1 items-center">
 	<div class="mx-auto grid w-full max-w-7xl items-center gap-4 px-4 pb-10 pt-28 sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:gap-10">
-		<h1 class="text-[clamp(2.5rem,7vw,6rem)] font-semibold leading-none lg:text-right">{line1}</h1>
+		<h1 class="depth-text-l relative z-20 text-[clamp(2.5rem,7.4vw,6.6rem)] font-semibold leading-[0.95] lg:-mr-[4vw] lg:text-right">{line1}</h1>
 
 		{#if productImage}
-			<div class="relative mx-auto">
-				<Img src={productImage} alt={bestSeller?.t.imageAlt ?? bestSeller?.t.name ?? settings?.brandName} loading="eager"
-					class="h-[44svh] w-auto object-contain lg:h-[62svh]" />
+			<div class="relative z-10 mx-auto w-fit">
+				<div class="depth-bottle">
+					<Img src={productImage} alt={bestSeller?.t.imageAlt ?? bestSeller?.t.name ?? settings?.brandName} loading="eager"
+						class="h-[40svh] w-auto object-contain lg:h-[56svh]" />
+				</div>
+				<div class="contact-shadow" aria-hidden="true"></div>
 				{#if tr?.heroBadgeText}
-					<div class="absolute -right-4 top-6 grid size-28 place-items-center rounded-full border border-cream-100/60 bg-forest-900/70 p-3 text-center text-sm lg:-right-16">
+					<div class="absolute -right-[4.5rem] top-2 grid size-24 sm:size-28 place-items-center rounded-full border border-cream-100/60 bg-forest-900/75 p-3 text-center text-sm lg:-right-24">
 						{tr.heroBadgeText}
 					</div>
 				{/if}
 			</div>
 		{/if}
 
-		<div class="max-w-md">
+		<div class="depth-text-r max-w-md">
 			{#if line2}<p class="text-[clamp(2.5rem,7vw,6rem)] font-semibold leading-none">{line2}</p>{/if}
 			{#if tr?.subheadline}<p class="mt-5 text-cream-100/90">{tr.subheadline}</p>{/if}
 			{#if bestSeller}
@@ -68,13 +75,15 @@
 
 	<div class="mx-auto flex w-full max-w-7xl flex-wrap items-end justify-between gap-4 px-4 pb-8 sm:px-6">
 	{#if testimonial}
-		<a href="/{lang}/testimonials" class="block w-[min(20rem,100%)] rounded-md border border-cream-100/25 bg-cream-100/10 p-4 backdrop-blur-md">
+		<a href="/{lang}/testimonials" class="flex w-[min(24rem,100%)] items-center gap-4 rounded-md border border-cream-100/25 bg-cream-100/10 p-3 backdrop-blur-md">
 			{#if testimonial.posterImage}
-				<Img src={testimonial.posterImage} alt="" class="mb-3 aspect-video w-full rounded-sm object-cover" />
+				<Img src={testimonial.posterImage} alt="" class="aspect-video w-28 shrink-0 rounded-sm object-cover" />
 			{/if}
-			<span class="text-xs text-cream-100/80">{t('nav.testimonials')}</span>
-			<span class="mt-1 block font-serif text-lg leading-snug">{testimonial.t.title}</span>
-			<span class="mt-2 inline-block text-sm underline">{t('testimonials.play')}</span>
+			<span class="block min-w-0">
+				<span class="block text-xs text-cream-100/80">{t('nav.testimonials')}</span>
+				<span class="mt-1 line-clamp-2 block font-serif text-base leading-snug">{testimonial.t.title}</span>
+				<span class="mt-1 inline-block text-sm underline">{t('testimonials.play')}</span>
+			</span>
 		</a>
 	{/if}
 

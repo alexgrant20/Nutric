@@ -62,5 +62,9 @@
 	"footer.terms": "Terms of use and privacy",
 	"videos.nowShowing": "Now showing",
 	"videos.all": "All videos",
-	"videos.count": "Video {n} of {total}"
+	"videos.count": "Video {n} of {total}",
+	"coverflow.prev": "Previous product",
+	"coverflow.next": "Next product",
+	"coverflow.label": "Products in this collection",
+	"coverflow.count": "{n} of {total}"
 }

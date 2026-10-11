@@ -16,9 +16,9 @@ const note = (m: string) => missing.push(m);
 
 mkdirSync(IMG_DIR, { recursive: true });
 
-async function download(url: string): Promise<string | null> {
+async function download(url: string, saveAs?: string): Promise<string | null> {
 	const abs = url.startsWith('http') ? url : `${BASE}/${url.replace(/^\//, '')}`;
-	const name = basename(new URL(abs).pathname);
+	const name = saveAs ?? basename(new URL(abs).pathname);
 	const dest = join(IMG_DIR, name);
 	if (existsSync(dest)) return name;
 	const res = await fetch(abs);
@@ -106,7 +106,7 @@ async function main() {
 				regulatoryText: r.regulatory || null, imageAlt: r.name
 			};
 		}
-		const imgs = (await Promise.all(e.images.map(download))).filter(Boolean) as string[];
+		const imgs = (await Promise.all(e.images.map((u) => download(u)))).filter(Boolean) as string[];
 		const main = imgs.find((n) => /_1\./.test(n)) ?? imgs[0] ?? null;
 		products.push({
 			slug, collectionSlug: collectionSlugFor(e.name), mainImage: main, gallery: imgs,
@@ -120,10 +120,13 @@ async function main() {
 	// ---- collections
 	const collections: SeedData['collections'] = [];
 	for (const [i, brand] of ['revolutic', 'vitanetic', 'skinetique'].entries()) {
-		const banner = await download(`assets/images/${brand}-banner.png`);
+		const logo = await download(`assets/images/${brand}-banner.png`);
+		// Mood photos are real Nutric campaign photos from the source site; Skinetique has none there.
+		const mood: Record<string, string | null> = { revolutic: 'assets/images/microsite/R1.jpg', vitanetic: 'assets/images/slider/img1.jpg', skinetique: null };
+		const banner = mood[brand] ? await download(mood[brand]!, `mood-${brand}.jpg`) : null;
 		const name = brand[0].toUpperCase() + brand.slice(1);
 		collections.push({
-			slug: brand, bannerImage: banner, sortOrder: i,
+			slug: brand, bannerImage: banner, logoImage: logo, sortOrder: i,
 			t: Object.fromEntries(langs.map((l) => [l, { name, tagline: null, description: null, bannerAlt: name }]))
 		});
 	}

@@ -175,11 +175,11 @@ data/nutric.db (gitignored)
 
 ### 11.1 Design Read and dials
 
-> Reading this as: a natural healthcare product catalogue and event news site for health-conscious consumers and distributors across Malaysia, Indonesia, Greater China and Thailand, in a botanical editorial style (full-bleed landscape photography, restrained forest-green palette, serif product names), dial **ENERGY 2 / RHYTHM 3 / MOTION 2**.
+> Reading this as: a natural healthcare product catalogue and event news site for health-conscious consumers and distributors across Malaysia, Indonesia, Greater China and Thailand, in a botanical editorial style (full-bleed landscape photography, restrained forest-green palette, serif product names), dial **ENERGY 3 / RHYTHM 3 / MOTION 3** (raised from 2/3/2 on 2026-10-11 at the owner's request for 3D animation and richer assets).
 
 - **ENERGY 2**: a clear hero statement and one strong accent moment, calm everywhere else. Healthcare content needs trust more than spectacle.
 - **RHYTHM 3**: every landing section has its own composition (12.1). Sections are not a repeated title + subtitle + card grid.
-- **MOTION 2**: one-time entrance transitions and hover states; no loops (11.6).
+- **MOTION 3**: depth you can feel, driven only by the pointer, scroll position and drag (11.6a). Nothing animates on an endless loop. Reduced motion turns every 3D effect into a static, fully readable layout.
 
 Identity motif: the **headline that wraps around the product**. In the hero, the two headline lines sit left and right of the centered bottle photo, so the product is physically inside the sentence. The motif repeats only in the best-seller section (product image overlapping the text block) and nowhere else, so it stays a signature instead of a pattern.
 
@@ -256,6 +256,22 @@ Palette follows R-29: two core colors (forest, cream), neutrals, one accent.
 | Hero video (optional) | Autoplay muted, with a visible pause control | WCAG 2.2.2; looping ambient video is motion, so the user can stop it |
 
 Forbidden: endless pulses, floating elements, parallax, stacked fade+scale+bounce. With `prefers-reduced-motion: reduce`, transforms are removed (opacity-only), and the hero video does not autoplay.
+
+### 11.6a 3D scenes (added 2026-10-11)
+
+3D is built from real assets with CSS 3D transforms (perspective, rotateX/Y, translateZ). There are no invented 3D models: product packs are the source site's transparent renders, so they are tilted, lifted and grounded with a contact shadow, never stretched or faked as a turntable. Motion is driven by `src/lib/components/ui/motion.ts` (`tilt` for pointer depth, `scrollProgress` for scroll depth) and is a no-op under `prefers-reduced-motion` or on touch pointers.
+
+| Scene | What is 3D and why |
+|---|---|
+| Hero | Background plane, headline halves and the best-seller pack sit at different depths; the pack tilts with the pointer and drifts with scroll, with a contact shadow. Purpose: the product is physically inside the sentence (identity motif) |
+| Best seller | The brand word is set huge behind the pack, three benefit chips float at different depths. Purpose: layered depth that shows the product in front of its own name |
+| Collections | Coverflow: products on an arc in perspective, drag, swipe, arrow keys, prev/next. The collection's own campaign photo cross-fades behind it and its wordmark logo is the tab. Purpose: browse a range as a physical shelf. Reduced motion shows a flat scroll-snap row |
+| About | The statement is pinned and lights up word by word (character by character in Chinese and Thai) as the section scrolls. Purpose: pace the reading |
+| Videos | Poster stage (11.x video) |
+| Accolades | Trophy cabinet: trophies stand on a shelf at their natural size (the source images are small), tilt toward the pointer, lift on hover, newest year first. Purpose: recognitions as objects, not a thumbnail grid |
+| News | The cover drifts against its frame on scroll; list thumbnails tilt on hover |
+
+Floating benefit chips and the cabinet shelf use a soft shadow to mark elevation above the scene (R-12): the only shadows besides the featured pack, dialogs and the lightbox. The collection mood photo gets a scrim so text keeps 4.5:1 contrast.
 
 ### 11.7 Copy rules for UI text
 

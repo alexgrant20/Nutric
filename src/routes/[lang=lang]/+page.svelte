@@ -25,7 +25,7 @@
 	{:else if key === 'collections'}
 		<Collections lang={data.lang} collections={data.collections} products={data.products} />
 	{:else if key === 'about'}
-		<AboutTeaser lang={data.lang} html={data.aboutHtml} hasFullAbout={!!data.settings?.t?.aboutMd} />
+		<AboutTeaser lang={data.lang} text={data.aboutText} hasFullAbout={!!data.settings?.t?.aboutMd} />
 	{:else if key === 'testimonials' && data.testimonials.length}
 		<VideoStage lang={data.lang} items={data.testimonials} />
 	{:else if key === 'accolades'}

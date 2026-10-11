@@ -12,7 +12,7 @@ const data: SeedData = {
 		contactEmail: null, contactPhone: null, whatsappUrl: null, socialLinks: [],
 		t: { en: { tagline: null, headlineLine1: 'A', headlineLine2: 'B', subheadline: null, ctaLabel: null, heroBadgeText: null, aboutTeaserMd: 'About', aboutMd: null, termsMd: null, aboutImageAlt: null, footerNote: null } }
 	},
-	collections: [{ slug: 'c', bannerImage: null, sortOrder: 0, t: { en: { name: 'C', tagline: null, description: null, bannerAlt: null } } }],
+	collections: [{ slug: 'c', bannerImage: null, logoImage: 'logo.png', sortOrder: 0, t: { en: { name: 'C', tagline: null, description: null, bannerAlt: null } } }],
 	products: [
 		{ slug: 'p1', collectionSlug: 'c', mainImage: 'a.png', gallery: ['a.png'], isBestSeller: true, sortOrder: 0,
 			t: { en: { name: 'P1', shortDescription: null, descriptionMd: null, benefits: ['x'], ingredientsMd: null, howToUseMd: null, faqs: [], regulatoryText: null, imageAlt: null } } }
@@ -34,6 +34,11 @@ describe('loadSeed', () => {
 		const db = createDb(':memory:');
 		loadSeed(db, data);
 		expect(db.select().from(s.products).get()?.mainImage).toBe('/uploads/seed/a.png');
+	});
+	it('stores the collection logo and mood photo as upload URLs', () => {
+		const db = createDb(':memory:');
+		loadSeed(db, data);
+		expect(db.select().from(s.collections).get()?.logoImage).toBe('/uploads/seed/logo.png');
 	});
 	it('stores the video poster as an upload URL', () => {
 		const db = createDb(':memory:');

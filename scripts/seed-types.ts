@@ -21,7 +21,7 @@ export interface SeedData {
 		}>;
 	};
 	collections: {
-		slug: string; bannerImage: string | null; sortOrder: number;
+		slug: string; bannerImage: string | null; logoImage: string | null; sortOrder: number;
 		t: Tr<{ name: string; tagline: string | null; description: string | null; bannerAlt: string | null }>;
 	}[];
 	products: {

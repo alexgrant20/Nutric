@@ -62,5 +62,9 @@
 	"footer.terms": "使用條款與隱私",
 	"videos.nowShowing": "正在播放",
 	"videos.all": "全部影片",
-	"videos.count": "第 {n} 部，共 {total} 部影片"
+	"videos.count": "第 {n} 部，共 {total} 部影片",
+	"coverflow.prev": "上一個產品",
+	"coverflow.next": "下一個產品",
+	"coverflow.label": "此系列的產品",
+	"coverflow.count": "第 {n} 個，共 {total} 個"
 }

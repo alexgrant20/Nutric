@@ -76,13 +76,53 @@
 		color-mix(in srgb, var(--forest-900) 25%, transparent)
 	);
 }
+.depth-plane {
+	transform: translate3d(calc(var(--px, 0) * -10px), calc(var(--p, 0) * 10%), 0) scale(1.08);
+	transition: transform 0.35s ease-out;
+	will-change: transform;
+}
+.depth-text-l {
+	transform: translate3d(calc(var(--px, 0) * -16px), calc(var(--p, 0) * -28px), 0);
+	transition: transform 0.35s ease-out;
+}
+.depth-text-r {
+	transform: translate3d(calc(var(--px, 0) * 16px), calc(var(--p, 0) * -44px), 0);
+	transition: transform 0.35s ease-out;
+}
+.depth-bottle {
+	transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg))
+		translate3d(0, calc(var(--p, 0) * -70px), 0) scale(calc(1 + var(--p, 0) * 0.1));
+	transition: transform 0.3s ease-out;
+	will-change: transform;
+}
+/* A grounded product casts a shadow: it anchors the bottle in the scene and shifts with the pointer. */
+.contact-shadow {
+	position: absolute;
+	left: 50%;
+	bottom: -0.6rem;
+	width: 62%;
+	height: 1.6rem;
+	margin-left: -31%;
+	border-radius: 50%;
+	background: radial-gradient(closest-side, rgb(0 0 0 / 0.55), transparent);
+	filter: blur(5px);
+	transform: translateX(calc(var(--px, 0) * -22px));
+	transition: transform 0.3s ease-out;
+}
 .hero-scrim {
-	background: linear-gradient(
-		to bottom,
-		color-mix(in srgb, var(--forest-900) 60%, transparent),
-		color-mix(in srgb, var(--forest-900) 40%, transparent) 45%,
-		color-mix(in srgb, var(--forest-900) 78%, transparent)
-	);
+	background:
+		radial-gradient(ellipse at 50% 45%, transparent 35%, color-mix(in srgb, var(--forest-900) 55%, transparent) 100%),
+		linear-gradient(
+			to bottom,
+			color-mix(in srgb, var(--forest-900) 82%, transparent),
+			color-mix(in srgb, var(--forest-900) 38%, transparent) 30%,
+			color-mix(in srgb, var(--forest-900) 45%, transparent) 60%,
+			color-mix(in srgb, var(--forest-900) 80%, transparent)
+		);
+}
+/* The pack stands on a floor: the scene darkens toward the bottom so the contact shadow reads. */
+.hero-floor {
+	background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--forest-900) 70%, transparent));
 }
 .hero-media { animation: hero-settle 1.2s ease-out both; }
 @keyframes hero-settle { from { transform: scale(1.04); } to { transform: none; } }

@@ -62,5 +62,9 @@
 	"footer.terms": "ข้อกำหนดการใช้งานและความเป็นส่วนตัว",
 	"videos.nowShowing": "กำลังเล่น",
 	"videos.all": "วิดีโอทั้งหมด",
-	"videos.count": "วิดีโอที่ {n} จาก {total}"
+	"videos.count": "วิดีโอที่ {n} จาก {total}",
+	"coverflow.prev": "ผลิตภัณฑ์ก่อนหน้า",
+	"coverflow.next": "ผลิตภัณฑ์ถัดไป",
+	"coverflow.label": "ผลิตภัณฑ์ในคอลเลกชันนี้",
+	"coverflow.count": "{n} จาก {total}"
 }

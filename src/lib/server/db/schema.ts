@@ -12,6 +12,7 @@ export const collections = sqliteTable('collections', {
 	id: id(),
 	slug: text('slug').notNull().unique(),
 	bannerImage: text('banner_image'),
+	logoImage: text('logo_image'),
 	sortOrder: integer('sort_order').notNull().default(0),
 	...stamps
 });

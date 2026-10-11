@@ -18,7 +18,7 @@ export function loadSeed(db: Db, data: SeedData, opts: { copyImagesTo?: string; 
 		const files = new Set<string>();
 		const add = (f: string | null | undefined) => f && files.add(f);
 		add(data.settings.logoImage); add(data.settings.heroMedia); add(data.settings.heroProductImage);
-		data.collections.forEach((c) => add(c.bannerImage));
+		data.collections.forEach((c) => { add(c.bannerImage); add(c.logoImage); });
 		data.products.forEach((p) => { add(p.mainImage); p.gallery.forEach(add); });
 		data.news.forEach((n) => add(n.coverImage));
 		data.accolades.forEach((a) => add(a.image));
@@ -43,7 +43,7 @@ export function loadSeed(db: Db, data: SeedData, opts: { copyImagesTo?: string; 
 
 		const collectionIds = new Map<string, number>();
 		for (const c of data.collections) {
-			const row = tx.insert(s.collections).values({ slug: c.slug, bannerImage: up(c.bannerImage), sortOrder: c.sortOrder }).returning().get();
+			const row = tx.insert(s.collections).values({ slug: c.slug, bannerImage: up(c.bannerImage), logoImage: up(c.logoImage), sortOrder: c.sortOrder }).returning().get();
 			collectionIds.set(c.slug, row.id);
 			for (const l of SEED_LANGS) if (c.t[l]) tx.insert(s.collectionTranslations).values({ collectionId: row.id, lang: l, ...c.t[l]! }).run();
 		}

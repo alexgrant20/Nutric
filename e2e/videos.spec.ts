@@ -16,8 +16,11 @@ test('video page: choosing a video swaps the stage, play loads the privacy-frien
 	const cards = page.locator('main ol button');
 	expect(await cards.count()).toBeGreaterThan(2);
 	const title = (await cards.nth(2).locator('span').last().innerText()).trim();
-	await cards.nth(2).click();
-	await expect(page.getByRole('button', { name: `Play video: ${title}` })).toBeVisible();
+	// Retry until the page has hydrated: a click before that has no handler yet.
+	await expect(async () => {
+		await cards.nth(2).click();
+		await expect(page.getByRole('button', { name: `Play video: ${title}` })).toBeVisible({ timeout: 1000 });
+	}).toPass({ timeout: 15_000 });
 	await expect(cards.nth(2)).toHaveAttribute('aria-current', 'true');
 	await page.getByRole('button', { name: `Play video: ${title}` }).click();
 	await expect(page.locator('main iframe')).toHaveAttribute('src', /^https:\/\/www\.youtube-nocookie\.com\/embed\/[\w-]{11}\?/);
