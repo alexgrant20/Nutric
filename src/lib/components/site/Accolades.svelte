@@ -6,14 +6,14 @@
 	let { lang, items, expanded = false }: { lang: string; items: any[]; expanded?: boolean } = $props();
 	const t = useT();
 	let selected: any = $state(null);
-	let open = $state(false);
+	let dialog: Dialog | undefined = $state();
 	const groups = $derived.by(() => {
 		const map = new Map<number | null, any[]>();
 		for (const it of items) map.set(it.year ?? null, [...(map.get(it.year ?? null) ?? []), it]);
 		return [...map.entries()].sort((a, b) => (a[0] ?? 9999) - (b[0] ?? 9999));
 	});
 	const hasYears = $derived(items.some((i) => i.year != null));
-	function show(it: any) { selected = it; open = true; }
+	function show(it: any) { selected = it; dialog?.show(); }
 </script>
 
 <section id="accolades" class="bg-cream-100 px-4 py-24 sm:px-6">
@@ -46,10 +46,10 @@
 	</div>
 </section>
 
-<Dialog bind:open label={selected?.t.title ?? t('accolades.title')}>
+<Dialog bind:this={dialog} label={selected?.t.title ?? t('accolades.title')}>
 	{#if selected}
 		<div class="flex justify-end">
-			<button onclick={() => (open = false)} class="min-h-11 rounded-sm border border-forest-700/40 px-4">{t('accolades.close')}</button>
+			<button onclick={() => dialog?.close()} class="min-h-11 rounded-sm border border-forest-700/40 px-4">{t('accolades.close')}</button>
 		</div>
 		<Img src={selected.image} alt={selected.t.imageAlt ?? selected.t.title} class="mx-auto mt-2 max-h-[70vh] w-auto" />
 		<h3 class="mt-4 font-serif text-2xl text-forest-700">{selected.t.title}</h3>
