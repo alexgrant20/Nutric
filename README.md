@@ -49,6 +49,7 @@ If Playwright cannot download its browser (for example the disk is full), point 
 
 - Copy the `drizzle/` folder next to the build output and run from the project root (migrations run on start).
 - Set `DATABASE_PATH` and `UPLOAD_DIR` at run time. SvelteKit rejects form posts whose `Origin` differs from the request origin: behind a TLS proxy run the server with `PROTOCOL_HEADER=x-forwarded-proto` (and `HOST_HEADER=x-forwarded-host` if the proxy rewrites the host); to serve plain http, set `SITE_ORIGIN=http://your-host:port` when running `npm run build`.
+- adapter-node rejects request bodies over 512 KB by default, which blocks normal photo uploads (the admin allows 5 MB per image, several images per save). Run the server with `BODY_SIZE_LIMIT=20M` (or higher).
 - Uploaded images are served by the `/uploads` route from `UPLOAD_DIR`, not from `static/`.
 - `NEWSLETTER_ENABLED` defaults to off outside development. Turn it on only when the Terms and Privacy text is final.
 

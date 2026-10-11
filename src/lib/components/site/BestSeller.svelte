@@ -15,7 +15,7 @@
 				{#if product.t.shortDescription}<p class="mt-4 max-w-prose text-stone-600">{product.t.shortDescription}</p>{/if}
 				{#if product.t.benefits?.length}
 					<ul class="mt-6 flex flex-wrap gap-2">
-						{#each product.t.benefits.slice(0, 3) as b (b)}
+						{#each product.t.benefits.slice(0, 3) as b, i (i)}
 							<li class="rounded-sm border border-forest-700/30 px-3 py-1 text-sm">{b}</li>
 						{/each}
 					</ul>

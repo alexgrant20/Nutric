@@ -415,7 +415,7 @@ Run before calling the UI done, and report each line with evidence:
 
 - **Q1 resolved:** scraped text is stored verbatim, no edits.
 - **Q5 resolved:** the advertisement approval text is shown as written, flagged in `seed/REPORT.md`.
-- **Q2 resolved in part:** the hero badge is wanted. The owner will supply the claim text, which goes in `seed/curated/hero-badge.json` per language (or the admin Settings page). Until it arrives the badge stays off.
+- **Q2 resolved:** the hero badge is wanted. Owner decision (2026-10-11): use dummy text until the real claim arrives, so the placeholder `[BADGE TEXT]` is seeded and shown. The real claim goes in `seed/curated/hero-badge.json` per language or in Admin > Settings; clearing the field hides the badge.
 - **Q3 resolved:** if the YouTube channel has no clear customer testimonials, official Nutric brand videos (profile, events) are shown in the testimonials section under their real titles, and they are not presented as customer testimonials. The section keeps its name in the UI; see the open item below.
 - **Q4 resolved:** scrape the Terms page from nutric.com (`/term-of-service`). Finding: it is NUTRIC INDONESIA's "Terms and conditions for online purchase" with a Privacy Policy section, so it describes a store this site does not have. It is stored verbatim as `terms_md`, flagged in the seed report, and Nutric must confirm or replace it before launch. Its Indonesia contact details are not used as the site contact.
 - **Hero badge:** placeholder text `[BADGE TEXT]` is seeded until the real claim arrives; it is flagged in the seed report.

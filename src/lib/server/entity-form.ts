@@ -7,7 +7,7 @@ export type FormErrors = Record<string, string>;
 export type FormValues = { base: Record<string, unknown>; trs: Record<string, Record<string, unknown>> };
 
 export function parseLines(text: string): string[] {
-	return text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+	return [...new Set(text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean))];
 }
 export function parseFaqs(text: string): { q: string; a: string }[] {
 	return text
@@ -15,7 +15,8 @@ export function parseFaqs(text: string): { q: string; a: string }[] {
 		.split(/\n\s*\n/)
 		.map((block) => block.trim().split('\n'))
 		.filter((lines) => lines.length >= 2 && lines[0].trim() && lines.slice(1).join('\n').trim())
-		.map((lines) => ({ q: lines[0].trim(), a: lines.slice(1).join('\n').trim() }));
+		.map((lines) => ({ q: lines[0].trim(), a: lines.slice(1).join('\n').trim() }))
+		.filter((faq, i, all) => all.findIndex((x) => x.q === faq.q) === i);
 }
 export const faqsToText = (faqs: { q: string; a: string }[]) => faqs.map((f) => `${f.q}\n${f.a}`).join('\n\n');
 

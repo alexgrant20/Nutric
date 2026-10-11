@@ -45,3 +45,11 @@ describe('validateSettings', () => {
 		expect(r.errors['f.contactEmail']).toBeTruthy();
 	});
 });
+
+describe('duplicate social links', () => {
+	it('keeps only the first entry for a repeated URL', () => {
+		expect(parseSocialLinks('facebook|https://fb.com/x\nfacebook|https://fb.com/x\ninstagram|https://fb.com/x')).toEqual([
+			{ platform: 'facebook', url: 'https://fb.com/x' }
+		]);
+	});
+});

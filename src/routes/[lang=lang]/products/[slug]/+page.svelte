@@ -40,7 +40,7 @@
 			{#if p.t.benefits?.length}
 				<h2 class="mt-8 text-lg font-semibold">{t('products.benefits')}</h2>
 				<ul class="mt-3 flex flex-wrap gap-2">
-					{#each p.t.benefits as b (b)}<li class="rounded-sm border border-forest-700/30 px-3 py-1 text-sm">{b}</li>{/each}
+					{#each p.t.benefits as b, i (i)}<li class="rounded-sm border border-forest-700/30 px-3 py-1 text-sm">{b}</li>{/each}
 				</ul>
 			{/if}
 			{#if contact}
@@ -57,7 +57,7 @@
 			<section>
 				<h2 class="text-2xl font-semibold">{t('products.faqs')}</h2>
 				<div class="mt-4 max-w-3xl divide-y divide-forest-700/20 border-y border-forest-700/20">
-					{#each p.t.faqs as f (f.q)}
+					{#each p.t.faqs as f, i (i)}
 						<details class="group py-1">
 							<summary class="flex min-h-12 cursor-pointer items-center justify-between gap-4 font-medium">{f.q}</summary>
 							<p class="pb-4 text-stone-600">{f.a}</p>

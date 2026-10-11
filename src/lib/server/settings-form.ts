@@ -4,7 +4,8 @@ import { COLOR_KEYS, validateTheme, type Theme } from '../theme/tokens';
 export function parseSocialLinks(text: string): { platform: string; url: string }[] {
 	return text.split(/\r?\n/).map((line) => line.split('|').map((x) => x.trim()))
 		.filter(([platform, url]) => platform && url && /^https:\/\//.test(url))
-		.map(([platform, url]) => ({ platform: platform.toLowerCase(), url }));
+		.map(([platform, url]) => ({ platform: platform.toLowerCase(), url }))
+		.filter((link, i, all) => all.findIndex((x) => x.url === link.url) === i);
 }
 export const socialLinksToText = (list: { platform: string; url: string }[]) => list.map((l) => `${l.platform}|${l.url}`).join('\n');
 

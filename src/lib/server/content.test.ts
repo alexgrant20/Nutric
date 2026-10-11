@@ -89,3 +89,23 @@ function unpublishAll(d: Db) {
 	d.update(s.accolades).set({ isPublished: false }).run();
 	d.update(s.siteSettingsTranslations).set({ aboutTeaserMd: null, aboutMd: null }).run();
 }
+
+describe('settings fallback is per field', () => {
+	it('fills fields missing in the requested language from English', () => {
+		db.insert(s.siteSettingsTranslations).values({ lang: 'zh', footerNote: 'only a footer note' }).run();
+		const st = c.getSettings(db, 'zh')!;
+		expect(st.t?.footerNote).toBe('only a footer note');
+		expect(st.t?.headlineLine1).toBe('Line one');
+		expect(st.t?.aboutTeaserMd).toBe('About **teaser**');
+	});
+	it('keeps the language value when present and treats empty strings as missing', () => {
+		db.insert(s.siteSettingsTranslations).values({ lang: 'th', headlineLine1: 'หัวข้อ', subheadline: '   ' }).run();
+		const st = c.getSettings(db, 'th')!;
+		expect(st.t?.headlineLine1).toBe('หัวข้อ');
+		expect(st.t?.subheadline).toBe('Sub');
+	});
+	it('landing keeps About for a partly filled language', () => {
+		db.insert(s.siteSettingsTranslations).values({ lang: 'th', footerNote: 'x' }).run();
+		expect(c.getLandingData(db, 'th').visible).toContain('about');
+	});
+});

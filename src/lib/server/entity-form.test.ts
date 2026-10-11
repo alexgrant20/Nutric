@@ -80,3 +80,12 @@ describe('news', () => {
 		expect(errs['f.status']).toBeTruthy();
 	});
 });
+
+describe('duplicate-safe list parsing', () => {
+	it('parseLines drops duplicate lines but keeps order', () => {
+		expect(parseLines('a\nb\na\n b \nc')).toEqual(['a', 'b', 'c']);
+	});
+	it('parseFaqs keeps only the first FAQ for a repeated question', () => {
+		expect(parseFaqs('Q?\nA1\n\nQ?\nA2\n\nR?\nB')).toEqual([{ q: 'Q?', a: 'A1' }, { q: 'R?', a: 'B' }]);
+	});
+});

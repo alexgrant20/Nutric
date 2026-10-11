@@ -120,7 +120,19 @@ export function getSettings(db: Db, lang: Lang) {
 	if (!base) return null;
 	const trs = db.select().from(s.siteSettingsTranslations).all();
 	const p = pickTranslation(trs, lang);
-	return { ...base, t: p.row, usedLang: p.usedLang };
+	const english = trs.find((r) => r.lang === 'en') ?? null;
+	// Settings have many independent fields: fall back to English per field, not per language row.
+	let t = p.row;
+	if (p.row && english && p.row !== english) {
+		const merged: Record<string, unknown> = { ...p.row };
+		for (const key of Object.keys(english)) {
+			if (key === 'id' || key === 'lang') continue;
+			const own = merged[key];
+			if (own == null || (typeof own === 'string' && own.trim() === '')) merged[key] = (english as Record<string, unknown>)[key];
+		}
+		t = merged as typeof p.row;
+	}
+	return { ...base, t, usedLang: p.usedLang };
 }
 
 function contentFlags(db: Db, lang: Lang, settings: ReturnType<typeof getSettings>) {

@@ -34,7 +34,7 @@
 				<div>
 					<h2 class="text-sm font-semibold">{t('footer.follow')}</h2>
 					<ul class="mt-3 space-y-1">
-						{#each socials as s (s.url)}
+						{#each socials as s, i (i)}
 							<li><a href={s.url} rel="noopener noreferrer" target="_blank" class="inline-flex min-h-11 items-center text-sm hover:underline">{labels[s.platform] ?? s.platform}</a></li>
 						{/each}
 					</ul>
