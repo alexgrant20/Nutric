@@ -18,7 +18,7 @@
 
 <section id="accolades" class="bg-cream-100 px-4 py-24 sm:px-6">
 	<div class="mx-auto max-w-7xl" use:reveal>
-		<h2 class="font-serif text-3xl text-forest-700 sm:text-4xl">{t('accolades.title')}</h2>
+		<svelte:element this={expanded ? 'h1' : 'h2'} class="font-serif text-3xl text-forest-700 sm:text-4xl">{t('accolades.title')}</svelte:element>
 		<div class="mt-10 flex gap-10 overflow-x-auto pb-6">
 			{#each groups as [year, list] (year)}
 				<div class="shrink-0">

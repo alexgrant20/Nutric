@@ -304,7 +304,7 @@ Background tones are tied to the section key, not its position. Reordering in th
 
 | Page | Composition |
 |---|---|
-| Product detail | Left: gallery (main image + thumbnails, keyboard operable). Right: name (Fraunces), collection link, short description, benefit chips, "Ask about this product" (renders only if a contact method exists). Below: tabs for Description, Ingredients, How to use (each tab hidden if empty), then related products from the same collection |
+| Product detail | Left: gallery (main image + thumbnails, keyboard operable). Right: name (Fraunces), collection link, short description, benefit chips, "Ask about this product" (renders only if a contact method exists). Below: stacked sections for Description, Ingredients, How to use, FAQs (each hidden if empty), the regulatory text, then related products from the same collection |
 | Collection | Banner photo with collection name and tagline, description, product grid |
 | News list | Featured latest article, then 3-column list of covers with date and location; pagination |
 | News detail | Cover, title, date and location line, Markdown body in a 68ch column, "Back to news", previous/next article |
