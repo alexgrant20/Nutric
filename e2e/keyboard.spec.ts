@@ -30,7 +30,7 @@ test('reduced motion removes entrance transforms and pauses the hero video', asy
 	await page.goto('/en');
 	const anim = await page.evaluate(() => getComputedStyle(document.querySelector('.hero-media')!).animationName);
 	expect(anim).toBe('none');
-	const paused = await page.evaluate(() => document.querySelector('video')?.paused ?? true);
-	expect(paused).toBe(true);
+	// The video can start natively before hydration; the page pauses it once it hydrates.
+	await expect.poll(() => page.evaluate(() => document.querySelector('video')?.paused ?? true), { timeout: 10_000 }).toBe(true);
 	await ctx.close();
 });
