@@ -59,5 +59,8 @@
 	"footer.sections": "On this site",
 	"footer.contact": "Contact",
 	"footer.follow": "Follow us",
-	"footer.terms": "Terms of use and privacy"
+	"footer.terms": "Terms of use and privacy",
+	"videos.nowShowing": "Now showing",
+	"videos.all": "All videos",
+	"videos.count": "Video {n} of {total}"
 }

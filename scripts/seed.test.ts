@@ -18,7 +18,7 @@ const data: SeedData = {
 			t: { en: { name: 'P1', shortDescription: null, descriptionMd: null, benefits: ['x'], ingredientsMd: null, howToUseMd: null, faqs: [], regulatoryText: null, imageAlt: null } } }
 	],
 	news: [{ slug: 'n1', coverImage: null, eventDate: '2017-01-01', location: null, t: { en: { title: 'N', excerpt: null, bodyMd: null, coverAlt: null } } }],
-	testimonials: [{ personName: null, role: null, youtubeUrl: 'https://youtu.be/dQw4w9WgXcQ', sortOrder: 0, t: { en: { title: 'V', quote: null } } }],
+	testimonials: [{ personName: null, role: null, youtubeUrl: 'https://youtu.be/dQw4w9WgXcQ', posterImage: 'yt-poster.jpg', sortOrder: 0, t: { en: { title: 'V', quote: null } } }],
 	accolades: [{ image: 'acc.jpg', year: null, issuer: null, sortOrder: 0, t: { en: { title: 'Acc', description: null, imageAlt: null } } }]
 };
 
@@ -34,6 +34,11 @@ describe('loadSeed', () => {
 		const db = createDb(':memory:');
 		loadSeed(db, data);
 		expect(db.select().from(s.products).get()?.mainImage).toBe('/uploads/seed/a.png');
+	});
+	it('stores the video poster as an upload URL', () => {
+		const db = createDb(':memory:');
+		loadSeed(db, data);
+		expect(db.select().from(s.testimonials).get()?.posterImage).toBe('/uploads/seed/yt-poster.jpg');
 	});
 	it('is repeatable', () => {
 		const db = createDb(':memory:');

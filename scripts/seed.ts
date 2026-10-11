@@ -22,6 +22,7 @@ export function loadSeed(db: Db, data: SeedData, opts: { copyImagesTo?: string; 
 		data.products.forEach((p) => { add(p.mainImage); p.gallery.forEach(add); });
 		data.news.forEach((n) => add(n.coverImage));
 		data.accolades.forEach((a) => add(a.image));
+		data.testimonials.forEach((x) => add(x.posterImage));
 		for (const f of files) if (existsSync(join(from, f))) copyFileSync(join(from, f), join(dir, f));
 	}
 
@@ -64,7 +65,7 @@ export function loadSeed(db: Db, data: SeedData, opts: { copyImagesTo?: string; 
 		for (const tm of data.testimonials) {
 			if (!youtubeId(tm.youtubeUrl)) continue;
 			const row = tx.insert(s.testimonials).values({
-				personName: tm.personName, role: tm.role, youtubeUrl: tm.youtubeUrl, isPublished: true, sortOrder: tm.sortOrder
+				personName: tm.personName, role: tm.role, youtubeUrl: tm.youtubeUrl, posterImage: up(tm.posterImage), isPublished: true, sortOrder: tm.sortOrder
 			}).returning().get();
 			for (const l of SEED_LANGS) if (tm.t[l]) tx.insert(s.testimonialTranslations).values({ testimonialId: row.id, lang: l, ...tm.t[l]! }).run();
 		}

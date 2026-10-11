@@ -242,7 +242,7 @@ function loadCuratedTestimonials(): SeedData['testimonials'] {
 	const list = JSON.parse(readFileSync(p, 'utf8')) as { youtubeUrl: string; title: string; personName?: string; role?: string; quote?: string }[];
 	if (!list.length) note('testimonials: curated list is empty; the testimonials section stays hidden');
 	return list.map((x, i) => ({
-		personName: x.personName ?? null, role: x.role ?? null, youtubeUrl: x.youtubeUrl, sortOrder: i,
+		personName: x.personName ?? null, role: x.role ?? null, youtubeUrl: x.youtubeUrl, posterImage: null, sortOrder: i,
 		t: { en: { title: x.title, quote: x.quote ?? null } }
 	}));
 }

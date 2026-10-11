@@ -59,5 +59,8 @@
 	"footer.sections": "Di situs ini",
 	"footer.contact": "Kontak",
 	"footer.follow": "Ikuti kami",
-	"footer.terms": "Syarat penggunaan dan privasi"
+	"footer.terms": "Syarat penggunaan dan privasi",
+	"videos.nowShowing": "Sedang diputar",
+	"videos.all": "Semua video",
+	"videos.count": "Video {n} dari {total}"
 }

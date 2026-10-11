@@ -40,6 +40,7 @@ The admin is at `/admin`. Sign in with the credentials from `.env`.
 | `npm test` | Unit tests (Vitest) |
 | `npm run test:e2e` | End-to-end, accessibility, overflow and keyboard tests (Playwright). Builds the app and seeds a separate `data/e2e.db` |
 | `npm run scrape` | Re-scrape nutric.com into `seed/data.json`, `seed/images` and `seed/REPORT.md` |
+| `npx tsx scripts/fetch-posters.ts` | Download each curated video's YouTube thumbnail into `seed/images` and set it as the poster in `seed/data.json` (run after `npm run scrape`, then `npm run seed`) |
 | `npm run seed` | Load `seed/data.json` into the database (replaces content, keeps subscribers and sessions) |
 | `npm run db:generate` | Generate a Drizzle migration after editing `src/lib/server/db/schema.ts` |
 

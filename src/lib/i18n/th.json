@@ -59,5 +59,8 @@
 	"footer.sections": "ในเว็บไซต์นี้",
 	"footer.contact": "ติดต่อ",
 	"footer.follow": "ติดตามเรา",
-	"footer.terms": "ข้อกำหนดการใช้งานและความเป็นส่วนตัว"
+	"footer.terms": "ข้อกำหนดการใช้งานและความเป็นส่วนตัว",
+	"videos.nowShowing": "กำลังเล่น",
+	"videos.all": "วิดีโอทั้งหมด",
+	"videos.count": "วิดีโอที่ {n} จาก {total}"
 }

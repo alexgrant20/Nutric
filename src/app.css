@@ -68,6 +68,14 @@
 .prose-md ol { list-style: decimal; padding-left: 1.4em; margin-block: 1em; }
 .prose-md a { text-decoration: underline; text-underline-offset: 3px; }
 
+.poster-scrim {
+	background: linear-gradient(
+		to top,
+		color-mix(in srgb, var(--forest-900) 92%, transparent),
+		color-mix(in srgb, var(--forest-900) 35%, transparent) 55%,
+		color-mix(in srgb, var(--forest-900) 25%, transparent)
+	);
+}
 .hero-scrim {
 	background: linear-gradient(
 		to bottom,

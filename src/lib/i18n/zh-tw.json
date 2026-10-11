@@ -59,5 +59,8 @@
 	"footer.sections": "本站內容",
 	"footer.contact": "聯絡方式",
 	"footer.follow": "追蹤我們",
-	"footer.terms": "使用條款與隱私"
+	"footer.terms": "使用條款與隱私",
+	"videos.nowShowing": "正在播放",
+	"videos.all": "全部影片",
+	"videos.count": "第 {n} 部，共 {total} 部影片"
 }

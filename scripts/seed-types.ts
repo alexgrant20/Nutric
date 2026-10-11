@@ -38,7 +38,7 @@ export interface SeedData {
 		t: Tr<{ title: string; excerpt: string | null; bodyMd: string | null; coverAlt: string | null }>;
 	}[];
 	testimonials: {
-		personName: string | null; role: string | null; youtubeUrl: string | null; sortOrder: number;
+		personName: string | null; role: string | null; youtubeUrl: string | null; posterImage: string | null; sortOrder: number;
 		t: Tr<{ title: string; quote: string | null }>;
 	}[];
 	accolades: {

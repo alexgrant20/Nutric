@@ -59,5 +59,8 @@
 	"footer.sections": "Di laman ini",
 	"footer.contact": "Hubungi",
 	"footer.follow": "Ikuti kami",
-	"footer.terms": "Terma penggunaan dan privasi"
+	"footer.terms": "Terma penggunaan dan privasi",
+	"videos.nowShowing": "Sedang ditayangkan",
+	"videos.all": "Semua video",
+	"videos.count": "Video {n} daripada {total}"
 }

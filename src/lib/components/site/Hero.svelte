@@ -27,7 +27,7 @@
 	}
 </script>
 
-<section id="hero" class="on-dark relative isolate flex min-h-[100svh] items-center overflow-hidden text-cream-100">
+<section id="hero" class="on-dark relative isolate flex min-h-[100svh] flex-col overflow-hidden text-cream-100">
 	{#if settings?.heroMedia && settings.heroMediaType === 'video'}
 		<video bind:this={video} class="hero-media absolute inset-0 -z-20 size-full object-cover" src={settings.heroMedia} autoplay muted loop playsinline preload="metadata"></video>
 	{:else if settings?.heroMedia}
@@ -37,7 +37,8 @@
 	{/if}
 	<div class="hero-scrim absolute inset-0 -z-10"></div>
 
-	<div class="mx-auto grid w-full max-w-7xl items-center gap-4 px-4 pb-40 pt-28 sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:gap-10">
+	<div class="flex flex-1 items-center">
+	<div class="mx-auto grid w-full max-w-7xl items-center gap-4 px-4 pb-10 pt-28 sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:gap-10">
 		<h1 class="text-[clamp(2.5rem,7vw,6rem)] font-semibold leading-none lg:text-right">{line1}</h1>
 
 		{#if productImage}
@@ -63,8 +64,14 @@
 		</div>
 	</div>
 
+	</div>
+
+	<div class="mx-auto flex w-full max-w-7xl flex-wrap items-end justify-between gap-4 px-4 pb-8 sm:px-6">
 	{#if testimonial}
-		<a href="/{lang}/testimonials" class="absolute bottom-8 left-4 w-[min(20rem,calc(100%-2rem))] rounded-md border border-cream-100/25 bg-cream-100/10 p-4 backdrop-blur-md sm:left-6">
+		<a href="/{lang}/testimonials" class="block w-[min(20rem,100%)] rounded-md border border-cream-100/25 bg-cream-100/10 p-4 backdrop-blur-md">
+			{#if testimonial.posterImage}
+				<Img src={testimonial.posterImage} alt="" class="mb-3 aspect-video w-full rounded-sm object-cover" />
+			{/if}
 			<span class="text-xs text-cream-100/80">{t('nav.testimonials')}</span>
 			<span class="mt-1 block font-serif text-lg leading-snug">{testimonial.t.title}</span>
 			<span class="mt-2 inline-block text-sm underline">{t('testimonials.play')}</span>
@@ -72,8 +79,9 @@
 	{/if}
 
 	{#if settings?.heroMedia && settings.heroMediaType === 'video'}
-		<button onclick={toggle} class="absolute bottom-8 right-4 min-h-11 rounded-sm border border-cream-100/40 px-4 text-sm sm:right-6">
+		<button onclick={toggle} class="ml-auto min-h-11 rounded-sm border border-cream-100/40 px-4 text-sm">
 			{paused ? t('hero.play') : t('hero.pause')}
 		</button>
 	{/if}
+	</div>
 </section>

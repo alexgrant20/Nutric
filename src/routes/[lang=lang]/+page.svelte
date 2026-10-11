@@ -3,7 +3,7 @@
 	import BestSeller from '$lib/components/site/BestSeller.svelte';
 	import Collections from '$lib/components/site/Collections.svelte';
 	import AboutTeaser from '$lib/components/site/AboutTeaser.svelte';
-	import Testimonials from '$lib/components/site/Testimonials.svelte';
+	import VideoStage from '$lib/components/site/VideoStage.svelte';
 	import Accolades from '$lib/components/site/Accolades.svelte';
 	import NewsSection from '$lib/components/site/NewsSection.svelte';
 	import Newsletter from '$lib/components/site/Newsletter.svelte';
@@ -27,7 +27,7 @@
 	{:else if key === 'about'}
 		<AboutTeaser lang={data.lang} html={data.aboutHtml} hasFullAbout={!!data.settings?.t?.aboutMd} />
 	{:else if key === 'testimonials' && data.testimonials.length}
-		<Testimonials lang={data.lang} items={data.testimonials} />
+		<VideoStage lang={data.lang} items={data.testimonials} />
 	{:else if key === 'accolades'}
 		<Accolades lang={data.lang} items={data.accolades} />
 	{:else if key === 'news'}
