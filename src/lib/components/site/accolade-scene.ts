@@ -28,10 +28,9 @@ interface Entry {
 	ready: boolean;
 }
 
-const SPACING = 6; // distance between two stations along the corridor
-const SIDE = 1.95; // how far a trophy stands from the centre line
+const GAP = 3.7; // distance between two neighbouring trophies along the gallery
 const PEDESTAL = 0.55; // pedestal height
-const TURN = 0.44; // resting angle of a trophy toward the path
+const TURN = 0.36; // how far a neighbouring trophy turns toward the centre
 
 const VERT = /* glsl */ `
 	varying vec2 vUv;
@@ -58,7 +57,7 @@ const FRAG = /* glsl */ `
 		float lum = dot(c.rgb, vec3(0.299, 0.587, 0.114));
 		float band = exp(-pow((vUv.x - 0.5 - uSweep) * 4.2, 2.0));
 		c.rgb += band * uGlint * (0.08 + 0.55 * lum * lum);
-		float fade = (1.0 - smoothstep(13.0, 30.0, vDepth)) * smoothstep(1.2, 4.6, vDepth);
+		float fade = 1.0 - smoothstep(22.0, 34.0, vDepth);
 		float a = c.a * uAlpha * fade;
 		if (uReflect > 0.5) a *= 0.32 * pow(1.0 - vUv.y, 1.8);
 		if (a < 0.004) discard;
@@ -107,7 +106,7 @@ export class AccoladeScene {
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
 		this.renderer.setClearColor(0x000000, 0);
 		this.scene = new Scene();
-		this.scene.fog = new Fog(new Color(opts.colors.cream), 11, 34);
+		this.scene.fog = new Fog(new Color(opts.colors.cream), 16, 40);
 		this.camera = new PerspectiveCamera(34, 1, 0.1, 80);
 		this.raycaster = new Raycaster();
 		this.build();
@@ -135,10 +134,9 @@ export class AccoladeScene {
 		const loader = new TextureLoader();
 
 		this.items.forEach((item, index) => {
-			const side = index % 2 === 0 ? -1 : 1;
+			const side = 0;
 			const group = new Group();
-			group.position.set(side * SIDE, 0, -index * SPACING);
-			group.rotation.y = -side * TURN;
+			group.position.set(index * GAP, 0, 0);
 
 			const mk = (reflect: boolean) =>
 				new ShaderMaterial({
@@ -213,9 +211,9 @@ export class AccoladeScene {
 			const tex = this.yearTexture(String(item.year));
 			this.textures.push(tex);
 			const mat = new MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.16, depthWrite: false });
-			const mesh = new Mesh(new PlaneGeometry(6.4, 3.2), mat);
+			const mesh = new Mesh(new PlaneGeometry(4.8, 2.4), mat);
 			mesh.rotation.x = -Math.PI / 2;
-			mesh.position.set(0, 0.003, -index * SPACING + 2.4);
+			mesh.position.set(index * GAP, 0.003, 1.7);
 			this.disposables.push(mesh.geometry, mat);
 			this.scene.add(mesh);
 		});
@@ -322,7 +320,7 @@ export class AccoladeScene {
 		this.height = Math.max(1, h);
 		this.renderer.setSize(this.width, this.height, false);
 		this.camera.aspect = this.width / this.height;
-		this.camera.fov = this.camera.aspect < 0.8 ? 52 : this.camera.aspect < 1.2 ? 42 : 34;
+		this.camera.fov = this.camera.aspect < 0.8 ? 46 : this.camera.aspect < 1.2 ? 38 : 30;
 		this.camera.updateProjectionMatrix();
 		this.frame(0);
 	}
@@ -347,35 +345,32 @@ export class AccoladeScene {
 	private frame(dt: number) {
 		const n = this.items.length;
 		if (!n) return;
-		this.intro = Math.min(1, this.intro + dt / 1.8);
+		this.intro = Math.min(1, this.intro + dt / 1.2);
 		const introE = 1 - Math.pow(1 - this.intro, 3);
 		this.pos += (this.target - this.pos) * (1 - Math.exp(-dt * 4.2));
 		this.pointer.sx += (this.pointer.x - this.pointer.sx) * (1 - Math.exp(-dt * 4));
 		this.pointer.sy += (this.pointer.y - this.pointer.sy) * (1 - Math.exp(-dt * 4));
 
 		const f = clamp(this.pos, 0, n - 1);
-		const i0 = Math.floor(f);
-		const i1 = Math.min(n - 1, i0 + 1);
-		const t = smooth(f - i0);
-		const zf = i0 + t;
-		const camXAt = (i: number) => -this.entries[i].side * 0.75;
-		const lookXAt = (i: number) => this.entries[i].side * SIDE * 0.7;
-		const camX = lerp(camXAt(i0), camXAt(i1), t);
-		const lookX = lerp(lookXAt(i0), lookXAt(i1), t);
-		const zItem = -zf * SPACING;
-		this.camera.position.set(camX + this.pointer.sx * 0.45, 1.5 + this.pointer.sy * -0.14 + (1 - introE) * 1.6, zItem + 5.1 + (1 - introE) * 10);
-		this.camera.lookAt(lookX + this.pointer.sx * 0.2, 1.5, zItem - 0.3);
+		// The camera keeps its distance and only slides sideways along the gallery; the pointer adds a little parallax.
+		const slideIn = (1 - introE) * GAP * 0.9;
+		const camX = f * GAP + this.pointer.sx * 0.55 + slideIn;
+		this.camera.position.set(camX, 1.6 - this.pointer.sy * 0.14, 9);
+		this.camera.lookAt(f * GAP + slideIn + this.pointer.sx * 0.35, 1.5, 0);
 
 		for (const e of this.entries) {
-			const a = clamp(1 - Math.abs(this.pos - e.index), 0, 1);
-			const ease = smooth(a);
+			const d = e.index - this.pos;
+			const ad = Math.abs(d);
+			const ease = smooth(clamp(1 - ad, 0, 1));
 			if (e.ready) e.loaded = Math.min(1, e.loaded + dt * 1.8);
-			const alpha = e.loaded * introE;
-			e.group.scale.setScalar(1 + 0.16 * ease);
-			e.group.rotation.y = -e.side * TURN * (1 - ease * 0.8);
-			e.group.position.x = e.side * SIDE * (1 - 0.3 * ease);
-			const wx = e.group.position.x;
-			const sweep = clamp((this.camera.position.x - wx) * 0.16, -0.5, 0.5);
+			// Neighbours turn toward the centre and sit a little further back, so the row curves around the visitor.
+			const far = smooth(clamp((ad - 1.7) / 1.6, 0, 1));
+			const alpha = e.loaded * introE * (1 - far);
+			e.group.position.x = e.index * GAP + Math.max(-1, Math.min(1, d)) * 0.28 * (1 - ease);
+			e.group.position.z = -Math.min(2.2, ad) * 0.95;
+			e.group.rotation.y = -Math.max(-2, Math.min(2, d)) * TURN;
+			e.group.scale.setScalar(1 + 0.08 * ease);
+			const sweep = clamp((this.camera.position.x - e.group.position.x) * 0.14, -0.5, 0.5);
 			for (const m of [e.material, e.reflectMaterial]) {
 				m.uniforms.uAlpha.value = alpha;
 				m.uniforms.uGlint.value = ease * 0.9;
