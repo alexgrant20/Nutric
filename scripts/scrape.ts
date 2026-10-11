@@ -198,11 +198,14 @@ async function main() {
 	const homeLine = (await page.locator('body').innerText()).split('\n').map((x) => x.trim()).find((x) => /regenerative healthcare/i.test(x));
 	for (const l of langs) {
 		const p = productsByLang[l]?.[0];
-		settingsT[l]!.subheadline = l === 'en' ? (homeLine ?? p?.tagline ?? null) : (p?.tagline ?? null);
-		settingsT[l]!.headlineLine1 = null;
+		const full = (l === 'en' ? (homeLine ?? p?.tagline) : p?.tagline) ?? '';
+		// The source tagline is "<headline> - <supporting sentence>" (English) or "<headline>. <supporting sentence>" (other languages).
+		const [head, ...rest] = full.split(/\s+-\s+|\.\s+/);
+		settingsT[l]!.headlineLine1 = head?.replace(/\.$/, '').trim() || null;
 		settingsT[l]!.headlineLine2 = null;
+		settingsT[l]!.subheadline = rest.join(' ').trim() || null;
 	}
-	note('settings: hero headline lines are NOT on the source site as two separate lines; set them in the admin (Settings > Hero)');
+	note('settings: hero headline is the first part of the source tagline (one line); a second line is not on the source site, add one in the admin (Settings > Texts by language) if wanted');
 	note('settings: contact email/phone/WhatsApp not collected; add them in the admin to enable the contact buttons');
 
 	const badge: Partial<Record<SeedLang, string>> = existsSync('seed/curated/hero-badge.json')
