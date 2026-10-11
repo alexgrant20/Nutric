@@ -47,7 +47,7 @@ Codes: `en`, `ms`, `id`, `zh`, `zh-tw`, `th`. Default `en`. The enabled list liv
 - UI strings: `src/lib/i18n/{lang}.json`, accessed via `t(key)`. Every string a visitor sees comes from here or from the database. No literal text in components.
 - Content: per-entity `*_translations` table keyed by `(entity_id, lang)`.
 - `getTranslation(rows, lang)` returns the requested language row, else the `en` row, and reports which language it actually used. When it falls back, the rendered element gets `lang="en"` so screen readers pronounce it correctly.
-- Language switcher is a list of real links to the same path in each language (works without JavaScript). `<link rel="alternate" hreflang>` is emitted for every enabled language that has a translation.
+- Language switcher is a list of real links to the same path in each language (works without JavaScript). `<link rel="alternate" hreflang>` is emitted for every enabled language (the English fallback guarantees every URL renders).
 - `<html lang>` set per request in `hooks.server.ts`.
 
 ## 4. Public routes
@@ -73,7 +73,7 @@ All tables have `id INTEGER PK`, `created_at`, `updated_at`.
 
 ```
 collections(slug UNIQUE, banner_image, sort_order)
-collection_translations(collection_id FK, lang, name, tagline, description, banner_alt)  UNIQUE(collection_id, lang)
+collection_translations(collection_id FK, lang, name, tagline NULL, description NULL, banner_alt NULL)  UNIQUE(collection_id, lang)
 
 products(slug UNIQUE, collection_id FK, main_image, gallery JSON[{path}], is_best_seller BOOL,
          is_published BOOL, sort_order)
@@ -83,11 +83,11 @@ product_translations(product_id FK, lang, name, short_description, description_m
 news(slug UNIQUE, cover_image, event_date, location, status 'draft'|'published', published_at)
 news_translations(news_id FK, lang, title, excerpt, body_md, cover_alt)  UNIQUE(news_id, lang)
 
-testimonials(person_name, role, avatar_image NULL, youtube_url NULL, poster_image NULL,
+testimonials(person_name NULL, role NULL, avatar_image NULL, youtube_url NULL, poster_image NULL,
              is_published, sort_order)
-testimonial_translations(testimonial_id FK, lang, quote)
+testimonial_translations(testimonial_id FK, lang, title, quote NULL)
 
-accolades(image, year, issuer, is_published, sort_order)
+accolades(image, year NULL, issuer NULL, is_published, sort_order)
 accolade_translations(accolade_id FK, lang, title, description, image_alt)
 
 page_sections(key UNIQUE, position, is_enabled)
@@ -292,7 +292,7 @@ Forbidden: endless pulses, floating elements, parallax, stacked fade+scale+bounc
 | 4 | Collections and products (`collections`) | Left: vertical list of collections (name + tagline) acting as filters; right: horizontal scroll-snap product rail with a "View all products" link. Mobile: collection chips above the rail | The active collection's rail | Forest-700, cream text | Hidden when no published product. A collection with no products is not listed |
 | 5 | About teaser (`about`) | Large-type paragraph spanning 8 columns, a single offset photo, text link to About | The paragraph | Cream | Hidden when `about_teaser_md` is empty |
 | 6 | Testimonials (`testimonials`) | One large video player (poster, click to load YouTube) + right-hand list of other videos (thumbnail, name, role); quote under the player | The featured video | Forest-900 | Hidden when no published testimonial. Never generated |
-| 7 | Accolades (`accolades`) | Horizontal timeline by year; certificates at natural aspect ratio on the line; click opens lightbox with title, issuer, year | The year ruler | Cream | Hidden when none; years from data only |
+| 7 | Accolades (`accolades`) | Horizontal timeline by year when items have years (plain strip otherwise); certificates at natural aspect ratio on the line; click opens lightbox with title, issuer, year | The year ruler | Cream | Hidden when none; years from data only |
 | 8 | News (`news`) | One featured article (large cover, title, date, location) + two stacked list rows (date, location, title, no image); "View all news" link | The featured article | Cream | Hidden when no published news |
 | 9 | Newsletter + footer (`newsletter`) | Single-line email form on forest; footer in two columns: sections that exist, and contact/socials that are set | The email field | Forest-900 | Form always renders; footer lists only real links |
 
