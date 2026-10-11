@@ -410,7 +410,17 @@ Run before calling the UI done, and report each line with evidence:
 8. Dials check: sections visibly differ in composition (RHYTHM 3), motion matches section 11.6 (MOTION 2), accent appears only where 11.3 allows (ENERGY 2).
 9. Content integrity: no number, name, quote, or claim in the UI that is not in `seed/data.json` or entered in the admin.
 
-## 16. Open questions for the owner
+## 16. Owner decisions (resolved 2026-10-11) and what is still open
+
+- **Q1 resolved:** scraped text is stored verbatim, no edits.
+- **Q5 resolved:** the advertisement approval text is shown as written, flagged in `seed/REPORT.md`.
+- **Q2 resolved in part:** the hero badge is wanted. The owner will supply the claim text, which goes in `seed/curated/hero-badge.json` per language (or the admin Settings page). Until it arrives the badge stays off.
+- **Q3 resolved:** if the YouTube channel has no clear customer testimonials, official Nutric brand videos (profile, events) are shown in the testimonials section under their real titles, and they are not presented as customer testimonials. The section keeps its name in the UI; see the open item below.
+- **Q4 still open:** whether Terms of Use and Privacy pages should be scraped.
+
+**Open item from Q3:** the UI label `testimonials.title` says Testimonials. If only brand videos are used, rename the section label to "Videos" (dictionary change in six languages) so the page does not imply customer reviews. Decide when the videos are known.
+
+## 16a. Original open questions (kept for history)
 
 - **Q1.** Scraped Nutric copy may include health or benefit claims, buzzwords, and em dashes. It is stored verbatim as the brand's own text. Should the seed script leave it untouched (default), or should the owner review and edit it in the admin before launch?
 - **Q2.** Does Nutric have a real "100% natural/plant based"-style claim they can document for the hero badge? If not, the badge stays off.

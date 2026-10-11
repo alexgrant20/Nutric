@@ -2755,7 +2755,11 @@ Create `seed/curated/testimonials.json` as `[]`. Then open `https://www.youtube.
 ]
 ```
 
-Add `personName`, `role`, `quote` only if the video page or description states them. If the channel has no testimonial videos, leave `[]` and tell the user (the section stays hidden by design). Verify each ID with `youtubeId()` from `src/lib/youtube.ts` before saving.
+Add `personName`, `role`, `quote` only if the video page or description states them. Owner decision (2026-10-11): if the channel has no clear customer testimonials, use official Nutric brand videos (profile, events) with their exact YouTube titles, no `personName`, no `quote`, and tell the user which kind you used. If brand videos are used, rename the `testimonials.title` and `nav.testimonials` dictionary values to a neutral word for "Videos" in all six languages so the UI does not imply customer reviews (the dictionary parity test still passes). Verify each ID with `youtubeId()` from `src/lib/youtube.ts` before saving.
+
+- [ ] **Step 7b: Hero badge text (owner-supplied)**
+
+The owner wants the hero badge and will supply the claim text. Create `seed/curated/hero-badge.json` as `{ "en": "" }` plus any of `ms`, `id`, `zh`, `zh-tw`, `th` the owner provides. In `scripts/scrape.ts` read this file if it exists and set `settingsT[l].heroBadgeText` from it (empty string or missing key means `null`). Never write a badge text that the owner did not give.
 
 - [ ] **Step 8: Run the scraper and review the output**
 
