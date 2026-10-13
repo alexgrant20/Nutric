@@ -119,7 +119,7 @@ jobs:
           mv .incoming/build .incoming/drizzle .
           mv -f .incoming/package.json .incoming/package-lock.json .incoming/app.cjs .
           rm -rf .incoming
-          if [[ -n "${2:-}" ]]; then eval "$2"; fi
+          if [[ -n "${2:-}" ]]; then set +u; eval "$2"; set -u; fi
           npm ci --omit=dev
           mkdir -p tmp
           touch tmp/restart.txt
