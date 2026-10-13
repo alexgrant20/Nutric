@@ -1,4 +1,4 @@
-name: Production build and cPanel FTP
+name: Production build and cPanel SSH
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       deploy:
-        description: Upload the production package to cPanel
+        description: Deploy the production package to cPanel over SSH
         type: boolean
         default: false
 
@@ -56,21 +56,22 @@ jobs:
     steps:
       - name: Validate deployment configuration
         env:
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          FTP_SERVER_DIR: ${{ vars.FTP_SERVER_DIR }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+          DEPLOY_DIR: ${{ vars.DEPLOY_DIR }}
           SITE_ORIGIN: ${{ vars.SITE_ORIGIN }}
         shell: bash
         run: |
-          for key in FTP_SERVER FTP_USERNAME FTP_PASSWORD FTP_SERVER_DIR SITE_ORIGIN; do
+          for key in SSH_HOST SSH_USER SSH_PRIVATE_KEY SSH_KNOWN_HOSTS DEPLOY_DIR SITE_ORIGIN; do
             if [[ -z "${!key}" ]]; then
               echo "::error::Missing configuration: $key"
               exit 1
             fi
           done
-          if [[ "$FTP_SERVER_DIR" == '/' || "$FTP_SERVER_DIR" == './' || "$FTP_SERVER_DIR" != */ || "$FTP_SERVER_DIR" == *'..'* ]]; then
-            echo '::error::FTP_SERVER_DIR must be a dedicated application folder ending in /, not the FTP root.'
+          if [[ ! "$DEPLOY_DIR" =~ ^/home/[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)+$ ]]; then
+            echo '::error::DEPLOY_DIR must be an absolute application folder below /home/USER, without a trailing slash.'
             exit 1
           fi
           if [[ ! "$SITE_ORIGIN" =~ ^https://[^/]+$ ]]; then
@@ -81,28 +82,49 @@ jobs:
         with:
           name: nutric-production
           path: .deploy/
-      - name: Upload application files
-        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
-          port: ${{ vars.FTP_PORT || '21' }}
-          security: strict
-          local-dir: .deploy/
-          server-dir: ${{ vars.FTP_SERVER_DIR }}
-          dangerous-clean-slate: false
-          exclude: |
-            **/.env
-            **/.env.*
-            data/**
-            uploads/**
-            node_modules/**
-            tmp/**
-            **/*.db
-            **/*.db-*
-      - name: Server follow-up
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        shell: bash
         run: |
-          echo '### Upload completed' >> "$GITHUB_STEP_SUMMARY"
-          echo 'In the cPanel Node.js environment, run npm ci --omit=dev in the application root, then restart the application. See docs/deploy-cpanel.md.' >> "$GITHUB_STEP_SUMMARY"
+          install -d -m 700 ~/.ssh
+          printf '%s
+' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          printf '%s
+' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
+      - name: Upload application files
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ vars.SSH_PORT || '22' }}
+          DEPLOY_DIR: ${{ vars.DEPLOY_DIR }}
+        shell: bash
+        run: |
+          # One compressed stream into a staging folder; nothing live is touched yet.
+          tar -C .deploy -czf - . | ssh -i "$HOME/.ssh/deploy_key" -p "$SSH_PORT"             -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes "$SSH_USER@$SSH_HOST"             "rm -rf '$DEPLOY_DIR/.incoming' && mkdir -p '$DEPLOY_DIR/.incoming' && tar -xzf - -C '$DEPLOY_DIR/.incoming'"
+      - name: Install dependencies and restart
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ vars.SSH_PORT || '22' }}
+          DEPLOY_DIR: ${{ vars.DEPLOY_DIR }}
+          NODE_ACTIVATE: ${{ vars.NODE_ACTIVATE }}
+        shell: bash
+        run: |
+          ssh -i "$HOME/.ssh/deploy_key" -p "$SSH_PORT" -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes             "$SSH_USER@$SSH_HOST" bash -s -- "$DEPLOY_DIR" "$NODE_ACTIVATE" <<'REMOTE'
+          set -euo pipefail
+          cd "$1"
+          # Only build/ and drizzle/ are replaced; shared data, .env, node_modules and tmp/ stay.
+          rm -rf build drizzle
+          mv .incoming/build .incoming/drizzle .
+          mv -f .incoming/package.json .incoming/package-lock.json .incoming/app.cjs .
+          rm -rf .incoming
+          if [[ -n "${2:-}" ]]; then eval "$2"; fi
+          npm ci --omit=dev
+          mkdir -p tmp
+          touch tmp/restart.txt
+          REMOTE
+      - name: Summary
+        run: echo '### Deployed. Passenger restarts the app on the next request.' >> "$GITHUB_STEP_SUMMARY"
