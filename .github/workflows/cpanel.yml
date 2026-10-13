@@ -54,6 +54,12 @@ jobs:
       group: nutric-cpanel-production
       cancel-in-progress: false
     steps:
+      - name: Show GitHub runner public IP
+        shell: bash
+        run: |
+          echo "GitHub runner public IPv4:"
+          curl -4 --fail --silent --show-error --max-time 10 https://api.ipify.org
+          echo
       - name: Validate deployment configuration
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
