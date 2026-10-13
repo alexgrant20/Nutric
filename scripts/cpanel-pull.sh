@@ -23,9 +23,9 @@ rm -rf .incoming
 mkdir .incoming
 curl -fsSL "https://github.com/$REPO/releases/download/$tag/nutric-production.tar.gz" | tar -xz -C .incoming
 
-# Only build/ and drizzle/ are replaced; data, .env, node_modules and tmp/ stay.
-rm -rf build drizzle
-mv .incoming/build .incoming/drizzle .
+# Only build/, drizzle/ and native/ are replaced; data, .env, node_modules and tmp/ stay.
+rm -rf build drizzle native
+mv .incoming/build .incoming/drizzle .incoming/native .
 mv -f .incoming/package.json .incoming/package-lock.json .incoming/app.cjs .
 rm -rf .incoming
 
@@ -40,6 +40,8 @@ set -u
 command -v npm >/dev/null || { echo "npm not found. Set NODE_ACTIVATE." >&2; exit 1; }
 
 npm ci --omit=dev
+# Replace the prebuild that needs a newer glibc than this host has.
+cp native/better_sqlite3.node node_modules/better-sqlite3/prebuilds/linux-x64.node
 mkdir -p tmp
 touch tmp/restart.txt
 echo "$tag" > .release-tag
