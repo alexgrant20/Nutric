@@ -119,7 +119,19 @@ jobs:
           mv .incoming/build .incoming/drizzle .
           mv -f .incoming/package.json .incoming/package-lock.json .incoming/app.cjs .
           rm -rf .incoming
-          if [[ -n "${2:-}" ]]; then set +u; eval "$2"; set -u; fi
+          set +u
+          if [[ -n "${2:-}" ]]; then
+            eval "$2"
+          else
+            # cPanel keeps the app's Node environment in ~/nodevenv/<app root>/<version>/.
+            activate=$(ls -d "$HOME/nodevenv/${1#$HOME/}"/*/bin/activate 2>/dev/null | sort -V | tail -n1 || true)
+            if [[ -n "$activate" ]]; then source "$activate"; fi
+          fi
+          set -u
+          if ! command -v npm >/dev/null; then
+            echo "npm not found. Create the Node.js app in cPanel with application root ${1#$HOME/}, or set NODE_ACTIVATE." >&2
+            exit 1
+          fi
           npm ci --omit=dev
           mkdir -p tmp
           touch tmp/restart.txt
