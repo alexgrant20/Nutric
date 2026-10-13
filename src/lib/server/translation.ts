@@ -8,13 +8,13 @@ const sources: Record<Lang, string> = { en: 'EN', id: 'ID', ms: 'MS', zh: 'ZH', 
 
 export class UnsupportedLanguageError extends Error {}
 
-async function failure(response: Response) {
+async function failure(response: Response, step: string) {
 	const { status } = response;
 	if (status === 403) return 'DeepL rejected the API key. Check DEEPL_API_KEY on the server.';
 	if (status === 456) return 'The DeepL monthly character quota is used up.';
 	if (status === 429) return 'DeepL is busy. Wait a moment and retry.';
-	const detail = await response.json().then((body: { message?: unknown }) => typeof body.message === 'string' ? body.message : '', () => '');
-	return `DeepL could not translate this content (HTTP ${status}${detail ? `: ${detail}` : ''}). Retry later.`;
+	const detail = (await response.text().catch(() => '')).replace(/\s+/g, ' ').trim().slice(0, 200);
+	return `DeepL could not translate this content (${step}, HTTP ${status}${detail ? `: ${detail}` : ''}). Retry later.`;
 }
 
 // Translate prose separately so names, Markdown syntax, URLs and FAQ line breaks survive unchanged.
@@ -29,9 +29,9 @@ export async function translateFields(
 	const request = options.fetch ?? fetch;
 	// DeepL Free keys end in ":fx" and use a separate host.
 	const base = (options.url ?? (options.key.endsWith(':fx') ? 'https://api-free.deepl.com' : 'https://api.deepl.com')).replace(/\/$/, '');
-	const headers = { authorization: `DeepL-Auth-Key ${options.key}`, 'content-type': 'application/json' };
-	const languagesResponse = await request(`${base}/v2/languages?type=target`, { headers, signal: AbortSignal.timeout(10_000) });
-	if (!languagesResponse.ok) throw new Error(await failure(languagesResponse));
+	const auth = { authorization: `DeepL-Auth-Key ${options.key}` };
+	const languagesResponse = await request(`${base}/v2/languages?type=target`, { headers: auth, signal: AbortSignal.timeout(10_000) });
+	if (!languagesResponse.ok) throw new Error(await failure(languagesResponse, 'languages'));
 	const offered = await languagesResponse.json() as { language: string }[];
 	const to = targets[target].find((code) => offered.some((l) => l.language === code));
 	if (!to) throw new UnsupportedLanguageError(`DeepL does not translate into ${target}.`);
@@ -50,11 +50,11 @@ export async function translateFields(
 	for (let i = 0; i < chunks.length; i += 50) {
 		const batch = chunks.slice(i, i + 50);
 		const response = await request(`${base}/v2/translate`, {
-			method: 'POST', headers,
+			method: 'POST', headers: { ...auth, 'content-type': 'application/json' },
 			body: JSON.stringify({ text: batch, source_lang: from, target_lang: to, preserve_formatting: true }),
 			signal: AbortSignal.timeout(60_000)
 		});
-		if (!response.ok) throw new Error(await failure(response));
+		if (!response.ok) throw new Error(await failure(response, 'translate'));
 		const result = await response.json() as { translations?: { text?: unknown }[] };
 		if (!Array.isArray(result.translations) || result.translations.length !== batch.length || result.translations.some((t) => typeof t.text !== 'string')) {
 			throw new Error('DeepL returned an incomplete response. No fields were changed.');

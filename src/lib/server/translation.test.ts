@@ -54,7 +54,7 @@ describe('translation', () => {
 	});
 	it('shows the HTTP status and DeepL message for other failures', async () => {
 		const request = vi.fn().mockResolvedValue(Response.json({ message: 'Value for target_lang not supported.' }, { status: 400 }));
-		await expect(translateFields({ title: 'Welcome' }, 'en', 'id', options(request))).rejects.toThrow('HTTP 400: Value for target_lang not supported.');
+		await expect(translateFields({ title: 'Welcome' }, 'en', 'id', options(request))).rejects.toThrow('languages, HTTP 400: {"message":"Value for target_lang not supported."}');
 	});
 	it('asks for a key when none is configured', async () => {
 		await expect(translateFields({ title: 'Welcome' }, 'en', 'id', { key: '' })).rejects.toThrow('DEEPL_API_KEY');
