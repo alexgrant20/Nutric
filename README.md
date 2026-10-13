@@ -1,32 +1,26 @@
 # Nutric site and admin
 
-### Local automatic translation
+### Automatic translation (DeepL)
 
 The admin content forms and Settings have an **Automatic translation** control.
 Choose English or Indonesia as the source, then one target or all other languages.
 Only empty fields are filled. Existing translations are kept, and results remain
 unsaved until you review the language tabs and click **Save**.
 
-Start the official, self-hosted LibreTranslate service with Docker Desktop running:
+Create a free DeepL API key at https://www.deepl.com/pro-api (DeepL API Free, a
+monthly character quota, keys end in `:fx`) and set it in `.env` or in the
+Node.js app's environment variables, then restart NUTRIC:
 
-```sh
-docker compose -f compose.translation.yaml up -d
-docker compose -f compose.translation.yaml logs -f
+```dotenv
+DEEPL_API_KEY=your-key:fx
 ```
 
-First startup downloads language models for en, id, ms, zh, zt and th. Wait until
-`http://127.0.0.1:5000/languages` responds before translating. Traditional Chinese
-is mapped from the site's `zh-tw` code to the installed translator's code.
-Models persist in a Docker volume. The service is bound to localhost only.
-
-To stop translation: `docker compose -f compose.translation.yaml stop`.
-For a different private translator endpoint, set `LIBRETRANSLATE_URL` and optionally
-`LIBRETRANSLATE_API_KEY` in `.env`, then restart NUTRIC. Credentials stay on the server.
-Translation is performed on demand by signed-in admins; it never runs for visitors.
-Brand names, numbers, URLs and Markdown/FAQ separators are retained. Review machine
-translations before publishing, especially product terminology.
-
-LibreTranslate upstream: https://github.com/LibreTranslate/LibreTranslate (AGPL-3.0).
+The key stays on the server. Translation is performed on demand by signed-in
+admins; it never runs for visitors. Languages DeepL does not offer for your account
+(the app asks DeepL which targets exist) are skipped when you choose "All other
+languages", and a single unsupported target shows an error. Brand names, numbers,
+URLs and Markdown/FAQ separators are retained. Review machine translations before
+publishing, especially product terminology.
 
 If no admin account exists, copy `.env.example` to `.env`, set your own
 `ADMIN_EMAIL` and `ADMIN_PASSWORD` (12+ characters), then run:

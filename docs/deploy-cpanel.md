@@ -50,10 +50,9 @@ the release condition in the workflow. Protect `main` with the build check.
    otherwise use SQLite's backup API instead of copying an active database.
    This also transfers the admin account. Without this step a new database has
    no content or admin account. Do not reseed on deployment.
-4. For automatic translation, supply `LIBRETRANSLATE_URL` pointing to a reachable
-   private LibreTranslate service, and `LIBRETRANSLATE_API_KEY` if needed.
-   This workflow does not deploy Docker or language models. cPanel localhost
-   cannot reach the translator running on your own computer.
+4. For automatic translation, add `DEEPL_API_KEY` (a DeepL API Free key) to the
+   Node.js app's environment variables and restart. The server needs outbound
+   HTTPS access to `api-free.deepl.com`.
 
 ## Cron job (once)
 

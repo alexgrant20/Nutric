@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
-import { LIBRETRANSLATE_URL, LIBRETRANSLATE_API_KEY } from '$app/env/private';
+import { DEEPL_API_KEY } from '$app/env/private';
 import { isLang } from '$lib/i18n/config';
-import { translateFields } from '$lib/server/translation';
+import { translateFields, UnsupportedLanguageError } from '$lib/server/translation';
 
 const active = new Set<number>();
 export const POST = async ({ request, locals, url }) => {
@@ -17,12 +17,11 @@ export const POST = async ({ request, locals, url }) => {
 	}
 	active.add(locals.user.id);
 	try {
-		const fields = await translateFields(input.fields, input.source, input.target, {
-			url: LIBRETRANSLATE_URL, key: LIBRETRANSLATE_API_KEY
-		});
+		const fields = await translateFields(input.fields, input.source, input.target, { key: DEEPL_API_KEY });
 		return json({ fields });
 	} catch (e) {
-		const message = e instanceof TypeError ? 'Cannot reach LibreTranslate. Start the translator service first.' : e instanceof Error ? e.message : 'Translation failed.';
+		if (e instanceof UnsupportedLanguageError) return json({ error: e.message, unsupported: true }, { status: 422 });
+		const message = e instanceof TypeError ? 'Cannot reach DeepL. Check the internet access of the server.' : e instanceof Error ? e.message : 'Translation failed.';
 		return json({ error: message }, { status: 502 });
 	} finally { active.delete(locals.user.id); }
 };

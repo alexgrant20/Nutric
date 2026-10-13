@@ -13,6 +13,7 @@
 	async function translate() {
 		busy = true; failure = false; message = ''; onbusy?.(true);
 		let filled = 0;
+		const skipped: string[] = [];
 		const original = { ...values[source] };
 		try {
 			if (!fields.some((key) => original[key]?.trim())) throw new Error('Fill in the source language first.');
@@ -27,12 +28,14 @@
 					body: JSON.stringify({ source, target: language.code, fields: Object.fromEntries(pending.map((key) => [key, original[key]])) })
 				});
 				const result = await response.json();
+				if (response.status === 422 && result.unsupported && target === 'all') { skipped.push(language.label); continue; }
 				if (!response.ok) throw new Error(result.error || 'Translation failed.');
 				const updates = Object.fromEntries(pending.filter((key) => !values[language.code][key]?.trim() && typeof result.fields?.[key] === 'string').map((key) => [key, result.fields[key] as string]));
 				onfields(language.code, updates);
 				filled += Object.keys(updates).length;
 			}
-			message = filled ? `${filled} ${filled === 1 ? 'field' : 'fields'} translated. Review the language tabs, then Save.` : 'No empty fields to translate. Existing text was kept.';
+			message = (filled ? `${filled} ${filled === 1 ? 'field' : 'fields'} translated. Review the language tabs, then Save.` : 'No empty fields to translate. Existing text was kept.')
+				+ (skipped.length ? ` DeepL does not support: ${skipped.join(', ')}.` : '');
 		} catch (e) { failure = true; message = `${e instanceof Error ? e.message : 'Translation failed.'}${filled ? ` ${filled} translated fields are still available for review.` : ''}`; }
 		finally { busy = false; onbusy?.(false); }
 	}
@@ -40,7 +43,7 @@
 
 <fieldset disabled={busy} class="mb-6 border-b border-forest-700/20 pb-5">
 	<legend class="adm-label">Automatic translation</legend>
-	<p class="adm-help">LibreTranslate fills empty fields only. Nothing is saved until you click Save.</p>
+	<p class="adm-help">DeepL fills empty fields only. Nothing is saved until you click Save.</p>
 	<div class="mt-3 flex flex-wrap items-end gap-3">
 		<label class="adm-label" for="{uid}-source">From
 			<select id="{uid}-source" bind:value={source} class="adm-input"><option value="en">English</option><option value="id">Indonesia</option></select>
