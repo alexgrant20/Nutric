@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import ImageField from '$lib/components/admin/ImageField.svelte';
 	import LanguageTabs from '$lib/components/admin/LanguageTabs.svelte';
+	import TranslateControls from '$lib/components/admin/TranslateControls.svelte';
 	import Toast from '$lib/components/admin/Toast.svelte';
 	import { COLOR_KEYS } from '$lib/theme/tokens';
 
@@ -9,13 +10,17 @@
 	const errors = $derived(form?.errors ?? {});
 	const b = $derived(data.base);
 	let busy = $state(false);
+	let translating = $state(false);
 	const trFields: [string, string, boolean][] = [
 		['tagline', 'Tagline', false], ['headlineLine1', 'Hero headline, left part', false], ['headlineLine2', 'Hero headline, right part', false],
 		['subheadline', 'Hero subheadline', true], ['ctaLabel', 'Hero button label (leave empty for the default)', false],
 		['heroBadgeText', 'Hero badge text (leave empty for no badge; only enter a claim you can document)', false],
 		['aboutTeaserMd', 'About teaser (Markdown)', true], ['aboutMd', 'About page (Markdown)', true], ['termsMd', 'Terms and privacy page (Markdown)', true], ['aboutImageAlt', 'About image description', false], ['footerNote', 'Footer note', true]
 	];
-	const complete = $derived(Object.fromEntries(data.languages.map((l: any) => [l.code, !!data.trs[l.code]])));
+	const tv: Record<string, Record<string, string>> = $state(Object.fromEntries(data.languages.map((l: any) => [l.code,
+		Object.fromEntries(trFields.map(([name]) => [name, String((data.trs[l.code] as Record<string, unknown> | undefined)?.[name] ?? '')]))
+	])));
+	const complete = $derived(Object.fromEntries(data.languages.map((l: any) => [l.code, Object.values(tv[l.code]).some((value) => value.trim())])));
 	// Colour tokens read as plain words, not code names.
 	const colorLabel = (k: string) => k.replace(/([a-z])([0-9])/g, '$1 $2').replace(/^./, (c) => c.toUpperCase());
 </script>
@@ -81,17 +86,19 @@
 	<section class="adm-section" aria-labelledby="s-texts">
 		<div><h2 id="s-texts" class="adm-section-title">Texts by language</h2><p class="adm-help">Hero lines, the About page, Terms and the footer note. A language left empty shows the English text.</p></div>
 		<div class="min-w-0">
+			<TranslateControls values={tv} fields={trFields.map(([name]) => name)} languages={data.languages} onbusy={(value) => translating = value}
+				onfields={(language, translated) => Object.assign(tv[language], translated)} />
 			<LanguageTabs languages={data.languages} {complete}>
 				{#snippet children(code)}
 					{#each trFields as [name, label, long] (name)}
 						<div><label for="t-{code}-{name}" class="adm-label">{label}</label>
-							{#if long}<textarea id="t-{code}-{name}" name="t.{code}.{name}" rows="4" class="adm-input">{data.trs[code]?.[name] ?? ''}</textarea>
-							{:else}<input id="t-{code}-{name}" name="t.{code}.{name}" value={data.trs[code]?.[name] ?? ''} class="adm-input" />{/if}</div>
+							{#if long}<textarea id="t-{code}-{name}" name="t.{code}.{name}" rows="4" class="adm-input" bind:value={tv[code][name]}></textarea>
+							{:else}<input id="t-{code}-{name}" name="t.{code}.{name}" bind:value={tv[code][name]} class="adm-input" />{/if}</div>
 					{/each}
 				{/snippet}
 			</LanguageTabs>
 		</div>
 	</section>
 
-	<div class="adm-savebar"><button disabled={busy} class="adm-btn">{busy ? 'Saving' : 'Save settings'}</button></div>
+	<div class="adm-savebar"><button disabled={busy || translating} class="adm-btn">{busy ? 'Saving' : 'Save settings'}</button></div>
 </form>

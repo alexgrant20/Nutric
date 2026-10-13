@@ -1,4 +1,5 @@
-import { redirect, type Handle } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
+import type { Handle } from '@sveltejs/kit/hooks';
 import { dev } from '$app/env';
 import { db } from '$lib/server/db/instance';
 import { validateSession } from '$lib/server/auth';

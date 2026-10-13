@@ -1,0 +1,11 @@
+services:
+  translator:
+    image: libretranslate/libretranslate@sha256:3c1b5409c99ba7c1c361564564418c00890d83bb2f38e4dac3a7736cfda00d02
+    ports:
+      - "127.0.0.1:5000:5000"
+    command: --host 0.0.0.0 --load-only en,id,ms,zh,zt,th
+    volumes:
+      - translator-models:/home/libretranslate/.local
+    restart: unless-stopped
+volumes:
+  translator-models:

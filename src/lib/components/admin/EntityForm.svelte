@@ -3,6 +3,7 @@
 	import ImageField from './ImageField.svelte';
 	import MarkdownField from './MarkdownField.svelte';
 	import LanguageTabs from './LanguageTabs.svelte';
+	import TranslateControls from './TranslateControls.svelte';
 
 	let { entity, initial, errors = {}, relations, languages }: {
 		entity: any; initial: { base: Record<string, any>; trs: Record<string, Record<string, any>> };
@@ -12,6 +13,7 @@
 	const baseFields = $derived(entity.fields.filter((f: any) => !f.translatable));
 	const trFields = $derived(entity.fields.filter((f: any) => f.translatable));
 	let busy = $state(false);
+	let translating = $state(false);
 	const tv: Record<string, Record<string, any>> = $state(
 		Object.fromEntries(languages.map((l) => [l.code, Object.fromEntries(entity.fields.filter((f: any) => f.translatable).map((f: any) => [f.name, initial.trs[l.code]?.[f.name] ?? '']))]))
 	);
@@ -75,6 +77,8 @@
 				<p class="adm-help">{doneCount} of {languages.length} languages complete. A missing language shows the English text to visitors.</p>
 			</div>
 			<div class="min-w-0">
+				<TranslateControls values={tv} fields={trFields.map((f: any) => f.name)} {languages} onbusy={(value) => translating = value}
+					onfields={(language, translated) => Object.assign(tv[language], translated)} />
 				<LanguageTabs {languages} {complete}>
 					{#snippet children(code)}
 						{#each trFields as f (f.name)}
@@ -101,7 +105,7 @@
 	{/if}
 
 	<div class="adm-savebar">
-		<button disabled={busy} class="adm-btn">{busy ? 'Saving' : 'Save'}</button>
+		<button disabled={busy || translating} class="adm-btn">{busy ? 'Saving' : 'Save'}</button>
 		<a href="/admin/{entity.key}" class="adm-btn-ghost">Cancel</a>
 	</div>
 </form>

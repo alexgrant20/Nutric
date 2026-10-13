@@ -1,0 +1,108 @@
+name: Production build and cPanel FTP
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Upload the production package to cPanel
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SITE_ORIGIN: ${{ vars.SITE_ORIGIN }}
+      DATABASE_PATH: data/ci.db
+      UPLOAD_DIR: data/ci-uploads
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm test
+      - run: npm run build
+      - run: node scripts/package-deploy.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nutric-production
+          path: .deploy/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 7
+
+  deploy:
+    needs: build
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' ||
+       (github.event_name == 'workflow_dispatch' && inputs.deploy))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production
+    concurrency:
+      group: nutric-cpanel-production
+      cancel-in-progress: false
+    steps:
+      - name: Validate deployment configuration
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_SERVER_DIR: ${{ vars.FTP_SERVER_DIR }}
+          SITE_ORIGIN: ${{ vars.SITE_ORIGIN }}
+        shell: bash
+        run: |
+          for key in FTP_SERVER FTP_USERNAME FTP_PASSWORD FTP_SERVER_DIR SITE_ORIGIN; do
+            if [[ -z "${!key}" ]]; then
+              echo "::error::Missing configuration: $key"
+              exit 1
+            fi
+          done
+          if [[ "$FTP_SERVER_DIR" == '/' || "$FTP_SERVER_DIR" == './' || "$FTP_SERVER_DIR" != */ || "$FTP_SERVER_DIR" == *'..'* ]]; then
+            echo '::error::FTP_SERVER_DIR must be a dedicated application folder ending in /, not the FTP root.'
+            exit 1
+          fi
+          if [[ ! "$SITE_ORIGIN" =~ ^https://[^/]+$ ]]; then
+            echo '::error::SITE_ORIGIN must be an HTTPS origin without a path or trailing slash.'
+            exit 1
+          fi
+      - uses: actions/download-artifact@v4
+        with:
+          name: nutric-production
+          path: .deploy/
+      - name: Upload application files
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          port: ${{ vars.FTP_PORT || '21' }}
+          security: strict
+          local-dir: .deploy/
+          server-dir: ${{ vars.FTP_SERVER_DIR }}
+          dangerous-clean-slate: false
+          exclude: |
+            **/.env
+            **/.env.*
+            data/**
+            uploads/**
+            node_modules/**
+            tmp/**
+            **/*.db
+            **/*.db-*
+      - name: Server follow-up
+        run: |
+          echo '### Upload completed' >> "$GITHUB_STEP_SUMMARY"
+          echo 'In the cPanel Node.js environment, run npm ci --omit=dev in the application root, then restart the application. See docs/deploy-cpanel.md.' >> "$GITHUB_STEP_SUMMARY"
