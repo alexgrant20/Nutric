@@ -10,7 +10,7 @@
 	const rest = $derived(page.url.pathname.replace(/^\/[^/]+/, ''));
 	const overHero = $derived(rest === '' || rest === '/');
 	const currentSection = $derived('/' + rest.split('/')[1]);
-	const showExplore = $derived(['/about', '/products', '/news', '/accolades', '/testimonials'].includes(currentSection));
+	const showExplore = $derived(['/about', '/products', '/news', '/accolades', '/videos', '/testimonials'].includes(currentSection));
 </script>
 
 <svelte:head>

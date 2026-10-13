@@ -20,7 +20,6 @@
 					<li>
 						<a href="/{lang}{item.path}" class="group flex min-h-24 items-baseline justify-between gap-4 px-1 py-6 lg:px-6">
 							<span class="font-serif text-2xl group-hover:underline">{t(item.labelKey)}</span>
-							{#if counts[item.path]}<span class="text-sm tabular-nums text-cream-100/80">{counts[item.path]}</span>{/if}
 						</a>
 					</li>
 				{/each}

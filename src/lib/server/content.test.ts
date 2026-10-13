@@ -68,7 +68,7 @@ describe('news', () => {
 describe('landing', () => {
 	it('shows all content sections for the fixture', () => {
 		const d = c.getLandingData(db, 'en');
-		expect(d.visible).toEqual(['hero', 'best_seller', 'collections', 'about', 'testimonials', 'accolades', 'news', 'newsletter']);
+		expect(d.visible).toEqual(['hero', 'best_seller', 'collections', 'testimonials', 'accolades', 'news', 'newsletter', 'about']);
 	});
 	it('with nothing published shows only hero and newsletter and no nav', () => {
 		db.update(schemaProducts()).set({ isPublished: false }).run();
@@ -107,5 +107,13 @@ describe('settings fallback is per field', () => {
 	it('landing keeps About for a partly filled language', () => {
 		db.insert(s.siteSettingsTranslations).values({ lang: 'th', footerNote: 'x' }).run();
 		expect(c.getLandingData(db, 'th').visible).toContain('about');
+	});
+});
+
+describe('testimonials by kind', () => {
+	it('keeps videos and testimonials on separate pages', () => {
+		db.update(s.testimonials).set({ kind: 'testimonial' }).run();
+		expect(c.getTestimonials(db, 'en')).toEqual([]);
+		expect(c.getTestimonials(db, 'en', 'testimonial').map((x) => x.t.title)).toEqual(['A video']);
 	});
 });

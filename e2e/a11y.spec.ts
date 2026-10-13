@@ -5,7 +5,7 @@ import { login } from './helpers';
 // Sections fade in on scroll; audit them in their final visible state so axe does not measure mid-fade opacity.
 const SHOW_ALL = '.reveal { opacity: 1 !important; transform: none !important; transition: none !important; }';
 
-const PUBLIC = ['/en', '/en/products', '/en/news', '/en/about', '/en/accolades', '/en/testimonials', '/zh/news', '/th/products'];
+const PUBLIC = ['/en', '/en/products', '/en/news', '/en/about', '/en/accolades', '/en/videos', '/en/testimonials', '/zh/news', '/th/products'];
 
 for (const path of PUBLIC) {
 	test(`no serious axe violations on ${path}`, async ({ page }) => {

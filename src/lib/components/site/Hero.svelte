@@ -3,29 +3,21 @@
 	import { useT } from '$lib/i18n/context';
 	import Img from '../ui/Img.svelte';
 	import { scrollProgress, tilt } from '../ui/motion';
-	let { lang, settings, bestSeller, testimonial }: { lang: string; settings: any; bestSeller: any; testimonial: any } = $props();
+	let { lang, settings, bestSeller }: { lang: string; settings: any; bestSeller: any } = $props();
 	const t = useT();
 	const tr = $derived(settings?.t);
 	const line1 = $derived(tr?.headlineLine1 ?? tr?.tagline ?? settings?.brandName);
 	const line2 = $derived(tr?.headlineLine2);
 	const productImage = $derived(settings?.heroProductImage ?? bestSeller?.mainImage);
 	let video: HTMLVideoElement | undefined = $state();
-	let paused = $state(false);
 	onMount(() => {
 		if (settings?.heroMediaType === 'video' && matchMedia('(prefers-reduced-motion: reduce)').matches && video) {
-			const stop = () => {
-				video?.pause();
-				paused = true;
-			};
+			const stop = () => video?.pause();
 			video.autoplay = false;
 			stop();
 			video.addEventListener('canplay', stop, { once: true });
 		}
 	});
-	function toggle() {
-		if (!video) return;
-		if (video.paused) { video.play(); paused = false; } else { video.pause(); paused = true; }
-	}
 </script>
 
 <section id="hero" use:tilt={{ max: 6 }} use:scrollProgress={{ mode: 'leave' }} class="on-dark relative isolate flex min-h-[100svh] flex-col overflow-hidden text-cream-100">
@@ -70,27 +62,5 @@
 			{/if}
 		</div>
 	</div>
-
-	</div>
-
-	<div class="mx-auto flex w-full max-w-7xl flex-wrap items-end justify-between gap-4 px-4 pb-8 sm:px-6">
-	{#if testimonial}
-		<a href="/{lang}/testimonials" class="flex w-[min(24rem,100%)] items-center gap-4 rounded-md border border-cream-100/25 bg-cream-100/10 p-3 backdrop-blur-md">
-			{#if testimonial.posterImage}
-				<Img src={testimonial.posterImage} alt="" class="aspect-video w-28 shrink-0 rounded-sm object-cover" />
-			{/if}
-			<span class="block min-w-0">
-				<span class="block text-xs text-cream-100/80">{t('nav.testimonials')}</span>
-				<span class="mt-1 line-clamp-2 block font-serif text-base leading-snug">{testimonial.t.title}</span>
-				<span class="mt-1 inline-block text-sm underline">{t('testimonials.play')}</span>
-			</span>
-		</a>
-	{/if}
-
-	{#if settings?.heroMedia && settings.heroMediaType === 'video'}
-		<button onclick={toggle} class="ml-auto min-h-11 rounded-sm border border-cream-100/40 px-4 text-sm">
-			{paused ? t('hero.play') : t('hero.pause')}
-		</button>
-	{/if}
 	</div>
 </section>

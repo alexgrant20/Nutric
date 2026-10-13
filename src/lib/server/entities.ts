@@ -85,6 +85,7 @@ export const ENTITIES: Record<EntityKey, Entity> = {
 		key: 'testimonials', label: 'Testimonials', singular: 'testimonial', table: s.testimonials, trTable: s.testimonialTranslations, fk: 'testimonialId',
 		titleField: 'title', imageField: 'posterImage', publish: publishFlag, slugFrom: null, order: 'sort',
 		fields: [
+			{ name: 'kind', label: 'Shown on', type: 'select', options: [{ value: 'video', label: 'Videos page' }, { value: 'testimonial', label: 'Testimonials page' }] },
 			{ name: 'youtubeUrl', label: 'YouTube URL', type: 'url', required: true },
 			{ name: 'posterImage', label: 'Poster image', type: 'image', help: 'Shown before the video loads. Without one, no image request is made to YouTube.' },
 			{ name: 'personName', label: 'Person name', type: 'text' },

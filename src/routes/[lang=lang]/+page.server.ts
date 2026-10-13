@@ -13,6 +13,7 @@ export const load = ({ params }) => {
 	return {
 		...d,
 		aboutText: plainText(renderMarkdown(d.settings?.t?.aboutTeaserMd)),
-		testimonials: d.testimonials.map((x) => ({ ...x, videoId: youtubeId(x.youtubeUrl) })).filter((x) => x.videoId)
+		testimonials: d.testimonials.map((x) => ({ ...x, videoId: youtubeId(x.youtubeUrl) })).filter((x) => x.videoId),
+		reviews: d.reviews.map((x) => ({ ...x, videoId: youtubeId(x.youtubeUrl) })).filter((x) => x.videoId)
 	};
 };

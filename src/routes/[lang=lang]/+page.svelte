@@ -7,6 +7,7 @@
 	import Accolades from '$lib/components/site/Accolades.svelte';
 	import NewsSection from '$lib/components/site/NewsSection.svelte';
 	import Newsletter from '$lib/components/site/Newsletter.svelte';
+	import ReviewsSection from '$lib/components/site/ReviewsSection.svelte';
 
 	let { data } = $props();
 </script>
@@ -19,21 +20,21 @@
 <div class={data.visible[0] === 'hero' ? '' : 'pt-16'}>
 {#each data.visible as key (key)}
 	{#if key === 'hero'}
-		<Hero lang={data.lang} settings={data.settings} bestSeller={data.bestSeller} testimonial={data.testimonials[0] ?? null} />
+		<Hero lang={data.lang} settings={data.settings} bestSeller={data.bestSeller} />
 	{:else if key === 'best_seller' && data.bestSeller}
 		<BestSeller lang={data.lang} product={data.bestSeller} />
 	{:else if key === 'collections'}
 		<Collections lang={data.lang} collections={data.collections} products={data.products} />
 	{:else if key === 'about'}
-		<AboutTeaser lang={data.lang} text={data.aboutText} hasFullAbout={!!data.settings?.t?.aboutMd}
-			productCount={data.visible.includes('collections') ? data.products.length : 0}
-			accoladeCount={data.visible.includes('accolades') ? data.accolades.length : 0} />
+		<AboutTeaser lang={data.lang} text={data.aboutText} hasFullAbout={!!data.settings?.t?.aboutMd} />
 	{:else if key === 'testimonials' && data.testimonials.length}
 		<VideoStage lang={data.lang} items={data.testimonials} />
 	{:else if key === 'accolades'}
 		<Accolades lang={data.lang} items={data.accolades} />
 	{:else if key === 'news'}
 		<NewsSection lang={data.lang} items={data.news} />
+	{:else if key === 'reviews' && data.reviews.length}
+		<ReviewsSection lang={data.lang} items={data.reviews} />
 	{:else if key === 'newsletter'}
 		<Newsletter lang={data.lang} enabled={data.newsletterEnabled} />
 	{/if}

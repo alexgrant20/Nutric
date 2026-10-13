@@ -45,8 +45,9 @@
 </script>
 
 <section id="testimonials" use:scrollProgress class="on-dark relative overflow-hidden bg-forest-900 px-4 py-24 text-cream-100 sm:px-6 sm:py-32">
-	<div class="mx-auto max-w-7xl" use:reveal>
+	<div class="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4" use:reveal>
 		<svelte:element this={page ? 'h1' : 'h2'} class="font-serif text-[clamp(2.25rem,5vw,4rem)] leading-none">{t('testimonials.title')}</svelte:element>
+		{#if !page}<a href="/{lang}/videos" class="inline-flex min-h-12 items-center rounded-sm border border-cream-100/50 px-6 font-medium">{t('videos.viewAll')}</a>{/if}
 	</div>
 
 	{#if active}

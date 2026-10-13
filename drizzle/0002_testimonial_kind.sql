@@ -1,0 +1,1 @@
+ALTER TABLE `testimonials` ADD `kind` text DEFAULT 'video' NOT NULL;

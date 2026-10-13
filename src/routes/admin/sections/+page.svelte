@@ -4,7 +4,7 @@
 	let rows = $state(data.rows.map((r) => ({ ...r })));
 	const labels: Record<string, string> = {
 		hero: 'Hero', best_seller: 'Best seller', collections: 'Collections and products', about: 'About teaser',
-		testimonials: 'Testimonials', accolades: 'Accolades', news: 'Latest news', newsletter: 'Newsletter'
+		testimonials: 'Videos', accolades: 'Accolades', news: 'Latest news', reviews: 'Customer testimonials', newsletter: 'Newsletter'
 	};
 	function move(i: number, d: number) {
 		const j = i + d;

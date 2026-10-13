@@ -42,4 +42,7 @@ describe('navItemsFor', () => {
 	it('is empty when nothing but hero and newsletter is visible', () => {
 		expect(navItemsFor(['hero', 'newsletter'])).toEqual([]);
 	});
+	it('links videos and testimonials as separate pages', () => {
+		expect(navItemsFor(['testimonials', 'reviews']).map((i) => i.path)).toEqual(['/videos', '/testimonials']);
+	});
 });

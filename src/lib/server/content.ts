@@ -95,8 +95,8 @@ export function getNewsBySlug(db: Db, lang: Lang, slug: string) {
 }
 
 // ---------- testimonials and accolades ----------
-export function getTestimonials(db: Db, lang: Lang) {
-	const bases = db.select().from(s.testimonials).where(eq(s.testimonials.isPublished, true))
+export function getTestimonials(db: Db, lang: Lang, kind: 'video' | 'testimonial' = 'video') {
+	const bases = db.select().from(s.testimonials).where(and(eq(s.testimonials.isPublished, true), eq(s.testimonials.kind, kind)))
 		.orderBy(asc(s.testimonials.sortOrder), asc(s.testimonials.id)).all();
 	const trs = groupBy(
 		bases.length ? db.select().from(s.testimonialTranslations).where(inArray(s.testimonialTranslations.testimonialId, bases.map((b) => b.id))).all() : [],
@@ -144,6 +144,7 @@ function contentFlags(db: Db, lang: Lang, settings: ReturnType<typeof getSetting
 		testimonials: getTestimonials(db, lang).length > 0,
 		accolades: getAccolades(db, lang).length > 0,
 		news: getNewsPage(db, lang, 1, 1).total > 0,
+		reviews: getTestimonials(db, lang, 'testimonial').length > 0,
 		newsletter: true
 	};
 	return flags;
@@ -164,6 +165,7 @@ export function getLandingData(db: Db, lang: Lang) {
 		collections: getCollections(db, lang),
 		products: getProducts(db, lang),
 		testimonials: getTestimonials(db, lang),
+		reviews: getTestimonials(db, lang, 'testimonial'),
 		accolades: getAccolades(db, lang),
 		news: getAllNews(db, lang)
 	};

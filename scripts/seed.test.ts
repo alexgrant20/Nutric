@@ -28,7 +28,7 @@ describe('loadSeed', () => {
 		loadSeed(db, data);
 		expect(getProducts(db, 'en')).toHaveLength(1);
 		expect(getBestSeller(db, 'en')?.slug).toBe('p1');
-		expect(getChrome(db, 'en').visible).toEqual(['hero', 'best_seller', 'collections', 'about', 'testimonials', 'accolades', 'news', 'newsletter']);
+		expect(getChrome(db, 'en').visible).toEqual(['hero', 'best_seller', 'collections', 'testimonials', 'accolades', 'news', 'newsletter', 'about']);
 	});
 	it('rewrites image file names to upload URLs', () => {
 		const db = createDb(':memory:');

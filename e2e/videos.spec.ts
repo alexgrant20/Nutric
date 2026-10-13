@@ -5,14 +5,14 @@ test('video page: posters are self-hosted, nothing is requested from YouTube bef
 	page.on('request', (r) => {
 		if (/youtube|ytimg|googlevideo/.test(new URL(r.url()).hostname)) external.push(r.url());
 	});
-	await page.goto('/en/testimonials');
+	await page.goto('/en/videos');
 	await expect(page.getByRole('heading', { level: 1, name: 'Videos' })).toBeVisible();
 	await page.waitForTimeout(1500);
 	expect(external).toEqual([]);
 });
 
 test('video page: choosing a video swaps the stage, play loads the privacy-friendly embed', async ({ page }) => {
-	await page.goto('/en/testimonials');
+	await page.goto('/en/videos');
 	const cards = page.locator('main ol button');
 	expect(await cards.count()).toBeGreaterThan(2);
 	const title = (await cards.nth(2).locator('span').last().innerText()).trim();

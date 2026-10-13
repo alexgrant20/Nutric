@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { LANGS } from './helpers';
 
-const ROUTES = ['', '/products', '/news', '/about', '/accolades', '/testimonials'];
+const ROUTES = ['', '/products', '/news', '/about', '/accolades', '/videos', '/testimonials'];
 const WIDTHS = [360, 768, 1280];
 
 for (const lang of LANGS) {

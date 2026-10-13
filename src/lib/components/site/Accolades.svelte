@@ -96,7 +96,7 @@
 	<div class="mx-auto max-w-7xl">
 		<div class="flex flex-wrap items-end justify-between gap-4">
 			<svelte:element this={expanded ? 'h1' : 'h2'} class="font-serif text-[clamp(2.25rem,5vw,4rem)] leading-none text-forest-700">{t('accolades.title')}</svelte:element>
-			{#if !expanded}<a href="/{lang}/accolades" class="inline-flex min-h-11 items-center text-forest-700 underline underline-offset-4">{t('accolades.title')}</a>{/if}
+			{#if !expanded}<a href="/{lang}/accolades" class="inline-flex min-h-12 items-center rounded-sm border border-forest-700/50 px-6 font-medium text-forest-700">{t('accolades.viewAll')}</a>{/if}
 		</div>
 
 		{#if mode === 'flat'}

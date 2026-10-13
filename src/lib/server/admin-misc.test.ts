@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { eq } from 'drizzle-orm';
 import { createDb } from './db';
 import * as s from './db/schema';
 import { createAdminUser, verifyPassword } from './auth';
@@ -31,7 +32,19 @@ describe('reorderSections', () => {
 		const db = createDb(':memory:');
 		ensureSections(db);
 		reorderSections(db, ['bogus', 'news'], new Set(['news']));
-		expect(db.select().from(s.pageSections).all()).toHaveLength(8);
+		expect(db.select().from(s.pageSections).all()).toHaveLength(9);
+	});
+});
+
+describe('ensureSections', () => {
+	it('slots a section added later at its default place, keeping the rest in order', () => {
+		const db = createDb(':memory:');
+		ensureSections(db);
+		db.delete(s.pageSections).where(eq(s.pageSections.key, 'reviews')).run();
+		db.update(s.pageSections).set({ position: 7 }).where(eq(s.pageSections.key, 'newsletter')).run();
+		ensureSections(db);
+		const order = db.select().from(s.pageSections).orderBy(s.pageSections.position).all().map((r) => r.key);
+		expect(order.slice(-4)).toEqual(['news', 'reviews', 'newsletter', 'about']);
 	});
 });
 

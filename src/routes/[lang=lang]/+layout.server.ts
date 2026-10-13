@@ -14,7 +14,8 @@ export const load = ({ params }) => {
 		lang, settings, nav, visible, contact,
 		exploreCounts: {
 			'/products': getProducts(db, lang).length,
-			'/testimonials': getTestimonials(db, lang).length,
+			'/videos': getTestimonials(db, lang).length,
+			'/testimonials': getTestimonials(db, lang, 'testimonial').length,
 			'/accolades': getAccolades(db, lang).length
 		},
 		languages: LANGUAGES.filter((l) => l.enabled),

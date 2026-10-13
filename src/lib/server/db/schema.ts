@@ -86,6 +86,8 @@ export const newsTranslations = sqliteTable(
 
 export const testimonials = sqliteTable('testimonials', {
 	id: id(),
+	// "video" rows fill the Videos page and landing stage; "testimonial" rows fill the Testimonials page.
+	kind: text('kind', { enum: ['video', 'testimonial'] }).notNull().default('video'),
 	personName: text('person_name'),
 	role: text('role'),
 	avatarImage: text('avatar_image'),
