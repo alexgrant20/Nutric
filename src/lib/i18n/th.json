@@ -56,6 +56,8 @@
 	"newsletter.duplicate": "อีเมลนี้สมัครไว้แล้ว",
 	"newsletter.failed": "ไม่สามารถบันทึกอีเมลของคุณได้ กรุณาลองอีกครั้ง",
 	"newsletter.unavailable": "เร็วๆ นี้",
+	"footer.motto": "พัฒนาวิทยาศาสตร์\nยกระดับคุณภาพชีวิต",
+	"footer.top": "กลับไปด้านบน",
 	"footer.sections": "ในเว็บไซต์นี้",
 	"footer.contact": "ติดต่อ",
 	"footer.follow": "ติดตามเรา",
@@ -75,5 +77,13 @@
 	"accolades.hint": "ลาก เลื่อนไปด้านข้าง หรือใช้ปุ่มลูกศร",
 	"accolades.count": "{n} จาก {total}",
 	"accolades.loading": "กำลังเตรียมห้องจัดแสดง",
-	"accolades.gallery": "ห้องจัดแสดงรางวัล"
+	"accolades.gallery": "ห้องจัดแสดงรางวัล",
+	"about.stat.products": "ผลิตภัณฑ์",
+	"about.stat.collections": "คอลเลกชัน",
+	"about.stat.accolades": "รางวัล",
+	"about.stat.videos": "วิดีโอ",
+	"about.explore": "สำรวจเพิ่มเติม",
+	"news.more": "ข่าวสารและกิจกรรมอื่น ๆ",
+	"accolades.record": "บันทึกฉบับเต็ม",
+	"videos.about": "เกี่ยวกับวิดีโอนี้"
 }

@@ -56,6 +56,8 @@
 	"newsletter.duplicate": "此地址已訂閱。",
 	"newsletter.failed": "無法儲存您的地址，請重試。",
 	"newsletter.unavailable": "即將推出",
+	"footer.motto": "推動科學進步。\n提升生活品質。",
+	"footer.top": "返回頂部",
 	"footer.sections": "本站內容",
 	"footer.contact": "聯絡方式",
 	"footer.follow": "追蹤我們",
@@ -75,5 +77,13 @@
 	"accolades.hint": "拖曳、橫向捲動或使用方向鍵",
 	"accolades.count": "第 {n} 個，共 {total} 個",
 	"accolades.loading": "正在準備展廳",
-	"accolades.gallery": "榮譽展廳"
+	"accolades.gallery": "榮譽展廳",
+	"about.stat.products": "產品",
+	"about.stat.collections": "系列",
+	"about.stat.accolades": "獎項",
+	"about.stat.videos": "影片",
+	"about.explore": "繼續瀏覽",
+	"news.more": "更多新聞與活動",
+	"accolades.record": "完整記錄",
+	"videos.about": "關於此影片"
 }

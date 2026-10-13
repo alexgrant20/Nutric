@@ -80,12 +80,15 @@
 				</div>
 			{/if}
 
-			{#if active.t.quote || active.personName}
-				<div class="mx-auto mt-10 flex max-w-5xl flex-col items-center gap-3 text-center" aria-live="polite">
-					{#if active.t.quote}<p class="max-w-prose font-serif text-xl">{active.t.quote}</p>{/if}
-					{#if active.personName}<p class="text-sm text-cream-100/80">{active.personName}{active.role ? `, ${active.role}` : ''}</p>{/if}
+			<!-- The explanation for the chosen video, so each one says what it is about before it is played. -->
+			<div class="mx-auto mt-10 grid max-w-5xl gap-4 lg:grid-cols-12" aria-live="polite">
+				<p class="text-sm tabular-nums text-cream-100/80 lg:col-span-3">{num(index)} · {t('videos.about')}</p>
+				<div class="lg:col-span-9">
+					<h3 class="font-serif text-2xl leading-snug sm:text-3xl">{active.t.title}</h3>
+					{#if active.t.quote}<p class="mt-3 max-w-prose text-lg text-cream-100/90">{active.t.quote}</p>{/if}
+					{#if active.personName}<p class="mt-2 text-sm text-cream-100/80">{active.personName}{active.role ? `, ${active.role}` : ''}</p>{/if}
 				</div>
-			{/if}
+			</div>
 
 			<div class="mt-8 flex items-center justify-center gap-3">
 				<button type="button" class="size-12 rounded-sm border border-cream-100/40 disabled:opacity-40" aria-label={t('videos.prev')} disabled={index === 0} onclick={() => go(index - 1)}>
@@ -110,6 +113,7 @@
 								</span>
 								<span class="mt-3 block text-xs tabular-nums text-cream-100/70">{num(i)}{i === index ? ` · ${t('videos.nowShowing')}` : ''}</span>
 								<span class="mt-1 block font-serif text-xl leading-snug">{it.t.title}</span>
+								{#if it.t.quote}<span class="mt-2 line-clamp-3 block text-sm text-cream-100/80">{it.t.quote}</span>{/if}
 							</button>
 						</li>
 					{/each}

@@ -16,13 +16,13 @@
 		<section class="mt-14">
 			<h2 class="text-2xl font-semibold"><a href="/{data.lang}/collections/{g.collection.slug}" class="hover:underline">{g.collection.t.name}</a></h2>
 			{#if g.collection.t.tagline}<p class="mt-1 text-stone-600">{g.collection.t.tagline}</p>{/if}
-			<ul class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+			<ul class="mt-6 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
 				{#each g.products as p (p.id)}<li><ProductCard lang={data.lang} product={p} /></li>{/each}
 			</ul>
 		</section>
 	{/each}
 	{#if data.loose.length}
-		<ul class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+		<ul class="mt-14 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
 			{#each data.loose as p (p.id)}<li><ProductCard lang={data.lang} product={p} /></li>{/each}
 		</ul>
 	{/if}

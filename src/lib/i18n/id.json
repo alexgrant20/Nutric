@@ -56,6 +56,8 @@
 	"newsletter.duplicate": "Alamat ini sudah berlangganan.",
 	"newsletter.failed": "Alamat Anda tidak dapat disimpan. Coba lagi.",
 	"newsletter.unavailable": "Segera hadir",
+	"footer.motto": "Memajukan ilmu pengetahuan.\nMeningkatkan kualitas hidup.",
+	"footer.top": "Kembali ke atas",
 	"footer.sections": "Di situs ini",
 	"footer.contact": "Kontak",
 	"footer.follow": "Ikuti kami",
@@ -75,5 +77,13 @@
 	"accolades.hint": "Geser, gulir ke samping, atau gunakan tombol panah",
 	"accolades.count": "{n} dari {total}",
 	"accolades.loading": "Menyiapkan galeri",
-	"accolades.gallery": "Galeri penghargaan"
+	"accolades.gallery": "Galeri penghargaan",
+	"about.stat.products": "Produk",
+	"about.stat.collections": "Koleksi",
+	"about.stat.accolades": "Penghargaan",
+	"about.stat.videos": "Video",
+	"about.explore": "Jelajahi lebih lanjut",
+	"news.more": "Berita dan acara lainnya",
+	"accolades.record": "Catatan lengkap",
+	"videos.about": "Tentang video ini"
 }

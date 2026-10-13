@@ -1,7 +1,7 @@
 import { dev } from '$app/env';
 import { NEWSLETTER_ENABLED } from '$app/env/private';
 import { db } from '$lib/server/db/instance';
-import { getChrome } from '$lib/server/content';
+import { getAccolades, getChrome, getProducts, getTestimonials } from '$lib/server/content';
 import { LANGUAGES, type Lang } from '$lib/i18n/config';
 
 export const load = ({ params }) => {
@@ -12,6 +12,11 @@ export const load = ({ params }) => {
 		wa ?? (settings?.contactEmail ? `mailto:${settings.contactEmail}` : settings?.contactPhone ? `tel:${settings.contactPhone.replace(/[^\d+]/g, '')}` : null);
 	return {
 		lang, settings, nav, visible, contact,
+		exploreCounts: {
+			'/products': getProducts(db, lang).length,
+			'/testimonials': getTestimonials(db, lang).length,
+			'/accolades': getAccolades(db, lang).length
+		},
 		languages: LANGUAGES.filter((l) => l.enabled),
 		newsletterEnabled: dev || NEWSLETTER_ENABLED
 	};

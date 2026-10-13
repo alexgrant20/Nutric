@@ -70,7 +70,7 @@ export function getCollectionBySlug(db: Db, lang: Lang, slug: string) {
 }
 
 // ---------- news ----------
-function allNews(db: Db, lang: Lang) {
+export function getAllNews(db: Db, lang: Lang) {
 	const bases = db.select().from(s.news).where(eq(s.news.status, 'published'))
 		.orderBy(desc(s.news.eventDate), desc(s.news.id)).all();
 	const trs = groupBy(
@@ -79,16 +79,16 @@ function allNews(db: Db, lang: Lang) {
 	);
 	return localize(bases, trs, lang);
 }
-export type NewsView = ReturnType<typeof allNews>[number];
+export type NewsView = ReturnType<typeof getAllNews>[number];
 
 export function getNewsPage(db: Db, lang: Lang, page: number, perPage: number) {
-	const all = allNews(db, lang);
+	const all = getAllNews(db, lang);
 	const pages = Math.max(1, Math.ceil(all.length / perPage));
 	const current = Math.min(Math.max(1, Math.floor(page) || 1), pages);
 	return { items: all.slice((current - 1) * perPage, current * perPage), total: all.length, pages, page: current };
 }
 export function getNewsBySlug(db: Db, lang: Lang, slug: string) {
-	const all = allNews(db, lang);
+	const all = getAllNews(db, lang);
 	const i = all.findIndex((n) => n.slug === slug);
 	if (i < 0) return null;
 	return { item: all[i], prev: all[i - 1] ?? null, next: all[i + 1] ?? null };
@@ -165,6 +165,6 @@ export function getLandingData(db: Db, lang: Lang) {
 		products: getProducts(db, lang),
 		testimonials: getTestimonials(db, lang),
 		accolades: getAccolades(db, lang),
-		news: getNewsPage(db, lang, 1, 3).items
+		news: getAllNews(db, lang)
 	};
 }

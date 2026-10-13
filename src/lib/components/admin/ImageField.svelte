@@ -3,21 +3,31 @@
 		name: string; label: string; value: string | string[] | null; multiple?: boolean; error?: string; help?: string;
 	} = $props();
 	let kept = $state<string[]>(Array.isArray(value) ? [...value] : value ? [value] : []);
+	let picked = $state('');
 </script>
 
-<fieldset class="space-y-2">
-	<legend class="text-sm font-medium">{label}</legend>
-	{#if help}<p class="text-sm text-stone-600">{help}</p>{/if}
-	<ul class="flex flex-wrap gap-3">
-		{#each kept as src (src)}
-			<li class="w-28">
-				<img {src} alt="" class="aspect-square w-full rounded-sm bg-white object-contain" />
-				<input type="hidden" name="f.{name}" value={src} />
-				<button type="button" class="mt-1 min-h-11 w-full text-sm underline" onclick={() => (kept = kept.filter((k) => k !== src))}>Remove</button>
-			</li>
-		{/each}
-	</ul>
-	<input type="file" name="file.{name}" aria-label={label} accept="image/jpeg,image/png,image/webp" {multiple} class="block text-sm" aria-describedby={error ? `${name}-err` : undefined} />
-	<p class="text-xs text-stone-600">JPG, PNG or WebP, up to 5 MB.</p>
-	{#if error}<p id="{name}-err" role="alert" class="text-sm text-red-800">{error}</p>{/if}
+<fieldset>
+	<legend class="adm-label">{label}</legend>
+	{#if help}<p class="adm-help">{help}</p>{/if}
+	{#if kept.length}
+		<ul class="mt-3 flex flex-wrap gap-3">
+			{#each kept as src (src)}
+				<li class="w-32">
+					<span class="grid aspect-square place-items-center overflow-hidden rounded-sm border border-forest-700/20 bg-white"><img {src} alt="" class="size-full object-contain p-1" /></span>
+					<input type="hidden" name="f.{name}" value={src} />
+					<button type="button" class="adm-link-danger mt-1 w-full" onclick={() => (kept = kept.filter((k) => k !== src))}>Remove</button>
+				</li>
+			{/each}
+		</ul>
+	{:else}
+		<p class="adm-help">No image yet.</p>
+	{/if}
+	<label class="mt-3 flex min-h-12 cursor-pointer items-center gap-3 rounded-sm border border-dashed border-forest-700/50 bg-white/60 px-4 text-sm text-forest-700 hover:border-forest-700 hover:bg-white focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-forest-700">
+		<span class="font-medium">{kept.length ? 'Add or replace' : 'Choose a file'}</span>
+		<span class="min-w-0 flex-1 truncate text-stone-600">{picked || 'JPG, PNG or WebP, up to 5 MB'}</span>
+		<input type="file" name="file.{name}" aria-label={label} accept="image/jpeg,image/png,image/webp" {multiple} class="sr-only"
+			aria-describedby={error ? `${name}-err` : undefined}
+			onchange={(e) => (picked = Array.from((e.currentTarget as HTMLInputElement).files ?? []).map((f) => f.name).join(', '))} />
+	</label>
+	{#if error}<p id="{name}-err" role="alert" class="adm-error">{error}</p>{/if}
 </fieldset>

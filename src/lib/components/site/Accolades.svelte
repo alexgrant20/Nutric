@@ -56,8 +56,6 @@
 				try {
 					const [three, mod] = await Promise.all([import('three'), import('./accolade-scene')]);
 					if (disposed || !canvas) return;
-					// The floor numerals use the serif; never wait long for it (a hidden tab can stall font loading).
-					await Promise.race([document.fonts?.load('500 100px Fraunces').catch(() => null), new Promise((r) => setTimeout(r, 700))]);
 					const css = getComputedStyle(document.documentElement);
 					const val = (name: string, fallback: string) => css.getPropertyValue(name).trim() || fallback;
 					const built = new mod.AccoladeScene(
@@ -143,11 +141,44 @@
 				<p class="sr-only" aria-live="polite">{current ? `${current.year ?? ''} ${t('accolades.count', { n: station + 1, total: sorted.length })}` : ''}</p>
 			</div>
 
+			{#if current && mode === 'webgl'}
+				<div class="mt-6 grid gap-2 lg:grid-cols-12" aria-live="polite">
+					<p class="font-serif text-2xl tabular-nums text-forest-700 lg:col-span-2">{current.year ?? ''}</p>
+					<div class="lg:col-span-8">
+						<h3 class="font-serif text-xl text-forest-700 sm:text-2xl">{current.t.title}</h3>
+						{#if current.issuer}<p class="mt-1 text-sm text-stone-600">{t('accolades.issuedBy', { issuer: current.issuer })}</p>{/if}
+						{#if current.t.description}<p class="mt-2 max-w-prose text-stone-700">{current.t.description}</p>{/if}
+					</div>
+				</div>
+			{/if}
+
 			<ol class="sr-only">
 				{#each sorted as it (it.id)}
 					<li><button type="button" onclick={() => show(it)}>{it.year ?? ''} {it.t.title}</button></li>
 				{/each}
 			</ol>
+		{/if}
+
+		{#if expanded}
+			<!-- The full record: every accolade with its explanation, newest first. -->
+			<div class="mt-20 border-t border-forest-700/25 pt-10">
+				<h2 class="font-serif text-3xl text-forest-700">{t('accolades.record')}</h2>
+				<ol class="mt-8">
+					{#each sorted as it (it.id)}
+						<li class="grid gap-4 border-t border-forest-700/15 py-8 sm:grid-cols-[5.5rem_9rem_1fr] sm:gap-8 lg:grid-cols-[7rem_11rem_1fr]">
+							<p class="font-serif text-3xl tabular-nums text-forest-700">{it.year ?? ''}</p>
+							<button type="button" onclick={() => show(it)} class="block self-start rounded-sm bg-white/60 p-3" aria-label="{t('accolades.view')}: {it.t.title}">
+								<Img src={it.image} alt={it.t.imageAlt ?? it.t.title} class="mx-auto max-h-44 w-auto" />
+							</button>
+							<div>
+								<h3 class="font-serif text-xl text-forest-700 sm:text-2xl">{it.t.title}</h3>
+								{#if it.issuer}<p class="mt-1 text-sm text-stone-600">{t('accolades.issuedBy', { issuer: it.issuer })}</p>{/if}
+								{#if it.t.description}<p class="mt-3 max-w-prose text-stone-700">{it.t.description}</p>{/if}
+							</div>
+						</li>
+					{/each}
+				</ol>
+			</div>
 		{/if}
 	</div>
 </section>
@@ -158,7 +189,8 @@
 			<button onclick={() => dialog?.close()} class="min-h-11 rounded-sm border border-forest-700/40 px-4">{t('accolades.close')}</button>
 		</div>
 		<Img src={selected.image} alt={selected.t.imageAlt ?? selected.t.title} class="mx-auto mt-2 max-h-[70vh] w-auto" />
-		<h3 class="mt-4 font-serif text-2xl text-forest-700">{selected.year ? `${selected.year}` : selected.t.title}</h3>
+		<h3 class="mt-4 font-serif text-2xl text-forest-700">{selected.t.title}</h3>
+		{#if selected.year}<p class="text-sm tabular-nums text-stone-600">{selected.year}</p>{/if}
 		{#if selected.issuer}<p class="text-sm text-stone-600">{t('accolades.issuedBy', { issuer: selected.issuer })}</p>{/if}
 		{#if selected.t.description}<p class="mt-2">{selected.t.description}</p>{/if}
 	{/if}

@@ -56,6 +56,8 @@
 	"newsletter.duplicate": "This address is already subscribed.",
 	"newsletter.failed": "Could not save your address. Try again.",
 	"newsletter.unavailable": "Coming soon",
+	"footer.motto": "Progressing Science.\nUplifting Lives.",
+	"footer.top": "Back to top",
 	"footer.sections": "On this site",
 	"footer.contact": "Contact",
 	"footer.follow": "Follow us",
@@ -75,5 +77,13 @@
 	"accolades.hint": "Drag, scroll sideways or use the arrow keys",
 	"accolades.count": "{n} of {total}",
 	"accolades.loading": "Preparing the gallery",
-	"accolades.gallery": "Accolades gallery"
+	"accolades.gallery": "Accolades gallery",
+	"about.stat.products": "Products",
+	"about.stat.collections": "Collections",
+	"about.stat.accolades": "Accolades",
+	"about.stat.videos": "Videos",
+	"about.explore": "Keep exploring",
+	"news.more": "More news and events",
+	"accolades.record": "The full record",
+	"videos.about": "About this video"
 }

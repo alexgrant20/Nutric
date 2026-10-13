@@ -3,11 +3,14 @@
 	import { provideT } from '$lib/i18n/context';
 	import Navbar from '$lib/components/site/Navbar.svelte';
 	import Footer from '$lib/components/site/Footer.svelte';
+	import KeepExploring from '$lib/components/site/KeepExploring.svelte';
 
 	let { data, children } = $props();
 	const t = provideT(() => data.lang);
 	const rest = $derived(page.url.pathname.replace(/^\/[^/]+/, ''));
 	const overHero = $derived(rest === '' || rest === '/');
+	const currentSection = $derived('/' + rest.split('/')[1]);
+	const showExplore = $derived(['/about', '/products', '/news', '/accolades', '/testimonials'].includes(currentSection));
 </script>
 
 <svelte:head>
@@ -20,5 +23,10 @@
 	{t('nav.skip')}
 </a>
 <Navbar lang={data.lang} settings={data.settings} nav={data.nav} languages={data.languages} contact={data.contact} {overHero} pathRest={rest} />
-<main id="main">{@render children()}</main>
+<main id="main">
+	{@render children()}
+	{#if showExplore}
+		<KeepExploring lang={data.lang} nav={data.nav} currentPath={currentSection} counts={data.exploreCounts} />
+	{/if}
+</main>
 <Footer lang={data.lang} settings={data.settings} nav={data.nav} contact={data.contact} />

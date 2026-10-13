@@ -2398,26 +2398,26 @@
     {
       "image": "2018-1.png",
       "year": 2018,
-      "issuer": null,
+      "issuer": "Asia Best Product",
       "sortOrder": 0,
       "t": {
         "en": {
-          "title": "Accolade 2018",
-          "description": null,
-          "imageAlt": "Accolade 2018"
+          "title": "Asia Best Product, Beauty Awards 2018",
+          "description": "A trophy and a certificate of appreciation for the Asia Best Product Beauty Awards 2018, dated 27 October 2018 and presented in Bangkok.",
+          "imageAlt": "Winged gold trophy beside the framed Asia Best Product Beauty Awards 2018 certificate"
         }
       }
     },
     {
       "image": "2017-1.png",
       "year": 2017,
-      "issuer": null,
+      "issuer": "The BrandLaureate",
       "sortOrder": 1,
       "t": {
         "en": {
-          "title": "Accolade 2017",
-          "description": null,
-          "imageAlt": "Accolade 2017"
+          "title": "SMEs BestBrands Award, Corporate Branding",
+          "description": "The BrandLaureate SMEs BestBrands Award for Corporate Branding, for the 2016–2017 term. The certificate sits next to its trophy.",
+          "imageAlt": "Framed BrandLaureate SMEs BestBrands certificate with its trophy"
         }
       }
     },
@@ -2428,35 +2428,35 @@
       "sortOrder": 2,
       "t": {
         "en": {
-          "title": "Accolade 2017",
-          "description": null,
-          "imageAlt": "Accolade 2017"
+          "title": "Asia-Pacific Direct Selling 2017: Most Valuable Cooperative Marketing System",
+          "description": "A 2017 Asia-Pacific direct selling plaque, engraved in Chinese, recognising Nutric’s cooperative marketing system.",
+          "imageAlt": "Chinese-language 2017 Asia-Pacific direct selling award plaque"
         }
       }
     },
     {
       "image": "2017-3.png",
       "year": 2017,
-      "issuer": null,
+      "issuer": "China News Culture Promotion Association",
       "sortOrder": 3,
       "t": {
         "en": {
-          "title": "Accolade 2017",
-          "description": null,
-          "imageAlt": "Accolade 2017"
+          "title": "Asia-Pacific Direct Selling 2017: Outstanding Leader",
+          "description": "A glass trophy engraved in Chinese, awarded in December 2017 to Group Chairman Lim Chee Wei as an outstanding leader of Asia-Pacific direct selling.",
+          "imageAlt": "Glass Outstanding Leader trophy from the 2017 Asia-Pacific direct selling awards"
         }
       }
     },
     {
       "image": "2017-4.jpg",
       "year": 2017,
-      "issuer": null,
+      "issuer": "Chulalongkorn Research Institute, Bangkok",
       "sortOrder": 4,
       "t": {
         "en": {
-          "title": "Accolade 2017",
-          "description": null,
-          "imageAlt": "Accolade 2017"
+          "title": "Gold Medal Awards 2017, Asia Best Product",
+          "description": "A gold medal and certificate of appreciation, dated 23 December 2017, selecting a Nutric product as an Asia Best Product. The certificate is in Thai.",
+          "imageAlt": "Gold Medal Awards 2017 certificate and boxed gold medal"
         }
       }
     },
@@ -2467,9 +2467,9 @@
       "sortOrder": 5,
       "t": {
         "en": {
-          "title": "Accolade 2015",
-          "description": null,
-          "imageAlt": "Accolade 2015"
+          "title": "Crystal Trophy 2015",
+          "description": "A crystal trophy engraved in Chinese and English, received in 2015.",
+          "imageAlt": "Crystal trophy with a round top"
         }
       }
     },
@@ -2480,9 +2480,9 @@
       "sortOrder": 6,
       "t": {
         "en": {
-          "title": "Accolade 2014",
-          "description": null,
-          "imageAlt": "Accolade 2014"
+          "title": "Award Trophy 2014",
+          "description": "A faceted crystal trophy on a dark base, received in 2014.",
+          "imageAlt": "Faceted crystal trophy with a colourful emblem on top"
         }
       }
     },
@@ -2493,9 +2493,9 @@
       "sortOrder": 7,
       "t": {
         "en": {
-          "title": "Accolade 2013",
-          "description": null,
-          "imageAlt": "Accolade 2013"
+          "title": "Asia Entrepreneur of the Year 2013, Entrepreneurial Spirit Award",
+          "description": "A star-topped trophy awarded to Group Chairman Mr. Lim Chee Wei of Nutric Group with the Entrepreneurial Spirit Award.",
+          "imageAlt": "Star-topped black trophy engraved Asia Entrepreneur of the Year 2013"
         }
       }
     },
@@ -2506,35 +2506,35 @@
       "sortOrder": 8,
       "t": {
         "en": {
-          "title": "Accolade 2013",
-          "description": null,
-          "imageAlt": "Accolade 2013"
+          "title": "Crystal Trophy 2013",
+          "description": "A crystal trophy with an apple-shaped top on a black base, received in 2013.",
+          "imageAlt": "Crystal trophy with an apple-shaped top"
         }
       }
     },
     {
       "image": "2011-1.png",
       "year": 2011,
-      "issuer": null,
+      "issuer": "MLM Toper (Malaysia) Sdn Bhd",
       "sortOrder": 9,
       "t": {
         "en": {
-          "title": "Accolade 2011",
-          "description": null,
-          "imageAlt": "Accolade 2011"
+          "title": "Asia YES Brand Award 2011, Trophy",
+          "description": "The crystal trophy that came with the 2011 Asia YES Brand Award.",
+          "imageAlt": "Crystal Asia YES Brand Award trophy with a globe on top"
         }
       }
     },
     {
       "image": "2011-2.jpg",
       "year": 2011,
-      "issuer": null,
+      "issuer": "MLM Toper (Malaysia) Sdn Bhd",
       "sortOrder": 10,
       "t": {
         "en": {
-          "title": "Accolade 2011",
-          "description": null,
-          "imageAlt": "Accolade 2011"
+          "title": "Asia YES Brand Award 2011",
+          "description": "I-Linkage Sdn Bhd was awarded the 2011 Asia YES Brand Award following a strict selection process by MLM Toper (Malaysia), at a ceremony on 20 November 2011 at PWTC, Kuala Lumpur.",
+          "imageAlt": "Asia YES Brand Award 2011 certificate"
         }
       }
     },
@@ -2545,9 +2545,9 @@
       "sortOrder": 11,
       "t": {
         "en": {
-          "title": "Accolade 2010",
-          "description": null,
-          "imageAlt": "Accolade 2010"
+          "title": "Asia Pacific International Award 2010",
+          "description": "An award trophy with a gold torch emblem, presented to I-Linkage Sdn. Bhd. in 2010.",
+          "imageAlt": "Trophy with a gold emblem on a wooden base"
         }
       }
     },
@@ -2558,9 +2558,9 @@
       "sortOrder": 12,
       "t": {
         "en": {
-          "title": "Accolade 2009",
-          "description": null,
-          "imageAlt": "Accolade 2009"
+          "title": "Crystal Trophy 2009",
+          "description": "A crystal trophy with a sphere on top, received in 2009.",
+          "imageAlt": "Crystal trophy with a sphere on top"
         }
       }
     },
@@ -2571,9 +2571,9 @@
       "sortOrder": 13,
       "t": {
         "en": {
-          "title": "Accolade 2009",
-          "description": null,
-          "imageAlt": "Accolade 2009"
+          "title": "Asia-Pacific Marketing Enterprise Award 2009",
+          "description": "A framed plaque, written in Chinese, honouring Nutric as a marketing enterprise in Asia-Pacific in 2009.",
+          "imageAlt": "Framed 2009 Chinese-language award plaque"
         }
       }
     },
@@ -2584,9 +2584,9 @@
       "sortOrder": 14,
       "t": {
         "en": {
-          "title": "Accolade 2005",
-          "description": null,
-          "imageAlt": "Accolade 2005"
+          "title": "Asia Pacific Award 2005",
+          "description": "A globe-topped trophy received in 2005.",
+          "imageAlt": "Trophy topped with a blue globe"
         }
       }
     },
@@ -2597,9 +2597,9 @@
       "sortOrder": 15,
       "t": {
         "en": {
-          "title": "Accolade 2005",
-          "description": null,
-          "imageAlt": "Accolade 2005"
+          "title": "Asia Pacific Entrepreneurial Excellence Award 2005",
+          "description": "The 7th Asia Pacific – Malaysia Entrepreneurial Excellence Award, 2005, presented to an I-Linkage Sdn. Bhd. executive.",
+          "imageAlt": "Globe-topped trophy engraved Entrepreneurial Excellence Award 2005"
         }
       }
     }
@@ -2614,7 +2614,7 @@
       "t": {
         "en": {
           "title": "Nutric Corporate Story",
-          "quote": null
+          "quote": "Nutric introduces itself: regenerative healthcare solutions offered since 2001, under the line “Progressing Science, Uplifting Lives.”"
         }
       }
     },
@@ -2627,7 +2627,7 @@
       "t": {
         "en": {
           "title": "Uplifting Lives - Ms. Lim Bee Hong",
-          "quote": null
+          "quote": "Ms. Lim Bee Hong has trusted Nutric’s products since 2007. She speaks about her confidence in them and about “Sharing is Caring”, the mission that guides how she works with others today."
         }
       }
     },
@@ -2640,7 +2640,7 @@
       "t": {
         "en": {
           "title": "Uplifting Lives - Mr. Peter Lee",
-          "quote": null
+          "quote": "Lee Yang Yi, son of Mr. Peter Lee, tells how he regained his health after six months of using Nutric’s products, and how that helped his father avoid large surgical expenses."
         }
       }
     },
@@ -2653,7 +2653,7 @@
       "t": {
         "en": {
           "title": "Uplifting Lives - Jackson Liew",
-          "quote": null
+          "quote": "Mr. Jackson Liew has used Nutric since 2003. Diagnosed with frozen shoulder (adhesive capsulitis) at a young age, he explains how he came to rely on the products since."
         }
       }
     },
@@ -2666,7 +2666,7 @@
       "t": {
         "en": {
           "title": "Uplifting Lives - Mr. Lee Cheng Tong",
-          "quote": null
+          "quote": "Mr. Lee Cheng Tong describes regaining his mobility, and no longer being a burden to his family, after a six-month programme advised by professionals and supported by Nutric’s products."
         }
       }
     },
@@ -2679,7 +2679,7 @@
       "t": {
         "en": {
           "title": "Uplifting Lives - Ms. Jenny Chong",
-          "quote": null
+          "quote": "Ms. Jenny Chong has supported Nutric since 2011. She describes how the products helped her regain her health and how the business gave her time freedom."
         }
       }
     },
@@ -2692,7 +2692,7 @@
       "t": {
         "en": {
           "title": "Uplifting Lives - Madam Cheong",
-          "quote": null
+          "quote": "Madam Cheong is a long-time supporter of BioSpray. She tells how she went from being a frequent hospital patient to regaining her health with the product."
         }
       }
     },
@@ -2705,7 +2705,7 @@
       "t": {
         "en": {
           "title": "Uplifting Lives - Mr. Young Boon Teik",
-          "quote": null
+          "quote": "Mr. Young Boon Teik is a leader respected across the Nutric family for his passion in building the business. His story shows what the business makes possible."
         }
       }
     },
@@ -2718,7 +2718,7 @@
       "t": {
         "en": {
           "title": "Uplifting Lives - Mr. Robert Lim",
-          "quote": null
+          "quote": "Mr. Robert Lim has been a dedicated Nutric leader for years. He shares his experience and what persistence, determination and commitment have meant to his journey."
         }
       }
     },
@@ -2731,7 +2731,7 @@
       "t": {
         "en": {
           "title": "Revolutic® BioSpray® and BioSpray® Plus",
-          "quote": null
+          "quote": "An introduction to Revolutic® BioSpray® and BioSpray® Plus: regenerative healthcare for daily renewal, presented as a natural solution for cell repair and regeneration and a comprehensive nutritional supplement for cell defence."
         }
       }
     }

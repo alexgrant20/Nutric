@@ -56,6 +56,8 @@
 	"newsletter.duplicate": "该地址已订阅。",
 	"newsletter.failed": "无法保存您的地址，请重试。",
 	"newsletter.unavailable": "即将推出",
+	"footer.motto": "推动科学进步。\n提升生活品质。",
+	"footer.top": "返回顶部",
 	"footer.sections": "本站内容",
 	"footer.contact": "联系方式",
 	"footer.follow": "关注我们",
@@ -75,5 +77,13 @@
 	"accolades.hint": "拖动、横向滚动或使用方向键",
 	"accolades.count": "第 {n} 个，共 {total} 个",
 	"accolades.loading": "正在准备展厅",
-	"accolades.gallery": "荣誉展厅"
+	"accolades.gallery": "荣誉展厅",
+	"about.stat.products": "产品",
+	"about.stat.collections": "系列",
+	"about.stat.accolades": "奖项",
+	"about.stat.videos": "视频",
+	"about.explore": "继续浏览",
+	"news.more": "更多新闻与活动",
+	"accolades.record": "完整记录",
+	"videos.about": "关于此视频"
 }

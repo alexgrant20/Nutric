@@ -202,21 +202,6 @@ export class AccoladeScene {
 				() => { /* a missing image leaves its pedestal empty */ }
 			);
 		});
-
-		// Year numerals are painted on the floor where each new year begins, like markings on a gallery floor.
-		let prev: number | null | undefined;
-		this.items.forEach((item, index) => {
-			if (item.year == null || item.year === prev) { prev = item.year; return; }
-			prev = item.year;
-			const tex = this.yearTexture(String(item.year));
-			this.textures.push(tex);
-			const mat = new MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.16, depthWrite: false });
-			const mesh = new Mesh(new PlaneGeometry(4.8, 2.4), mat);
-			mesh.rotation.x = -Math.PI / 2;
-			mesh.position.set(index * GAP, 0.003, 1.7);
-			this.disposables.push(mesh.geometry, mat);
-			this.scene.add(mesh);
-		});
 	}
 
 	private radialTexture() {
@@ -230,21 +215,6 @@ export class AccoladeScene {
 		g.fillRect(0, 0, 128, 128);
 		return new this.THREE.CanvasTexture(c);
 	}
-	private yearTexture(text: string) {
-		const c = document.createElement('canvas');
-		c.width = 1024;
-		c.height = 512;
-		const g = c.getContext('2d')!;
-		g.fillStyle = this.opts.colors.forest;
-		g.font = '500 380px Fraunces, Georgia, serif';
-		g.textAlign = 'center';
-		g.textBaseline = 'middle';
-		g.fillText(text, 512, 270);
-		const tex = new this.THREE.CanvasTexture(c);
-		tex.anisotropy = 4;
-		return tex;
-	}
-
 	private bind() {
 		const el = this.canvas;
 		const down = (e: PointerEvent) => {
