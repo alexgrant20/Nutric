@@ -1,4 +1,4 @@
-name: Production build and cPanel SSH
+name: Production build and release
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       deploy:
-        description: Deploy the production package to cPanel over SSH
+        description: Publish the production package as a GitHub Release
         type: boolean
         default: false
 
@@ -41,45 +41,25 @@ jobs:
           include-hidden-files: true
           retention-days: 7
 
-  deploy:
+  # The cPanel server pulls the newest release with scripts/cpanel-pull.sh (cron).
+  release:
     needs: build
     if: >-
       github.ref == 'refs/heads/main' &&
       (github.event_name == 'push' ||
        (github.event_name == 'workflow_dispatch' && inputs.deploy))
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    environment: production
+    timeout-minutes: 10
+    permissions:
+      contents: write
     concurrency:
-      group: nutric-cpanel-production
+      group: nutric-release
       cancel-in-progress: false
     steps:
-      - name: Show GitHub runner public IP
-        shell: bash
-        run: |
-          echo "GitHub runner public IPv4:"
-          curl -4 --fail --silent --show-error --max-time 10 https://api.ipify.org
-          echo
-      - name: Validate deployment configuration
+      - name: Validate SITE_ORIGIN
         env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
-          DEPLOY_DIR: ${{ vars.DEPLOY_DIR }}
           SITE_ORIGIN: ${{ vars.SITE_ORIGIN }}
-        shell: bash
         run: |
-          for key in SSH_HOST SSH_USER SSH_PRIVATE_KEY SSH_KNOWN_HOSTS DEPLOY_DIR SITE_ORIGIN; do
-            if [[ -z "${!key}" ]]; then
-              echo "::error::Missing configuration: $key"
-              exit 1
-            fi
-          done
-          if [[ ! "$DEPLOY_DIR" =~ ^/home/[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)+$ ]]; then
-            echo '::error::DEPLOY_DIR must be an absolute application folder below /home/USER, without a trailing slash.'
-            exit 1
-          fi
           if [[ ! "$SITE_ORIGIN" =~ ^https://[^/]+$ ]]; then
             echo '::error::SITE_ORIGIN must be an HTTPS origin without a path or trailing slash.'
             exit 1
@@ -88,59 +68,17 @@ jobs:
         with:
           name: nutric-production
           path: .deploy/
-      - name: Configure SSH
+      - name: Publish release
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
-        shell: bash
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
-          install -d -m 700 ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
-      - name: Upload application files
-        env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_PORT: ${{ vars.SSH_PORT || '22' }}
-          DEPLOY_DIR: ${{ vars.DEPLOY_DIR }}
-        shell: bash
-        run: |
-          # One compressed stream into a staging folder; nothing live is touched yet.
-          tar -C .deploy -czf - . | ssh -i "$HOME/.ssh/deploy_key" -p "$SSH_PORT"             -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes "$SSH_USER@$SSH_HOST"             "rm -rf '$DEPLOY_DIR/.incoming' && mkdir -p '$DEPLOY_DIR/.incoming' && tar -xzf - -C '$DEPLOY_DIR/.incoming'"
-      - name: Install dependencies and restart
-        env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_PORT: ${{ vars.SSH_PORT || '22' }}
-          DEPLOY_DIR: ${{ vars.DEPLOY_DIR }}
-          NODE_ACTIVATE: ${{ vars.NODE_ACTIVATE }}
-        shell: bash
-        run: |
-          ssh -i "$HOME/.ssh/deploy_key" -p "$SSH_PORT" -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes             "$SSH_USER@$SSH_HOST" bash -s -- "$DEPLOY_DIR" "$NODE_ACTIVATE" <<'REMOTE'
-          set -euo pipefail
-          cd "$1"
-          # Only build/ and drizzle/ are replaced; shared data, .env, node_modules and tmp/ stay.
-          rm -rf build drizzle
-          mv .incoming/build .incoming/drizzle .
-          mv -f .incoming/package.json .incoming/package-lock.json .incoming/app.cjs .
-          rm -rf .incoming
-          set +u
-          if [[ -n "${2:-}" ]]; then
-            eval "$2"
-          else
-            # cPanel keeps the app's Node environment in ~/nodevenv/<app root>/<version>/.
-            activate=$(ls -d "$HOME/nodevenv/${1#$HOME/}"/*/bin/activate 2>/dev/null | sort -V | tail -n1 || true)
-            if [[ -n "$activate" ]]; then source "$activate"; fi
-          fi
-          set -u
-          if ! command -v npm >/dev/null; then
-            echo "npm not found. Create the Node.js app in cPanel with application root ${1#$HOME/}, or set NODE_ACTIVATE." >&2
-            exit 1
-          fi
-          npm ci --omit=dev
-          mkdir -p tmp
-          touch tmp/restart.txt
-          REMOTE
-      - name: Summary
-        run: echo '### Deployed. Passenger restarts the app on the next request.' >> "$GITHUB_STEP_SUMMARY"
+          tar -C .deploy -czf nutric-production.tar.gz .
+          tag="build-${{ github.run_number }}"
+          gh release create "$tag" nutric-production.tar.gz --target "$GITHUB_SHA" \
+            --title "Build ${{ github.run_number }}" \
+            --notes "Picked up automatically by the cPanel cron job." --latest
+          # Keep the five newest releases.
+          gh release list --limit 100 --json tagName --jq '.[5:][].tagName' |
+            xargs -r -n1 gh release delete --cleanup-tag --yes
+          echo "### Released $tag. The server deploys it on its next cron run." >> "$GITHUB_STEP_SUMMARY"
