@@ -22,6 +22,7 @@ export const POST = async ({ request, locals, url }) => {
 	} catch (e) {
 		if (e instanceof UnsupportedLanguageError) return json({ error: e.message, unsupported: true }, { status: 422 });
 		const message = e instanceof TypeError ? 'Cannot reach DeepL. Check the internet access of the server.' : e instanceof Error ? e.message : 'Translation failed.';
-		return json({ error: message }, { status: 502 });
+		// Not 5xx: the cPanel proxy replaces 5xx bodies with its own Bad Gateway page.
+		return json({ error: message }, { status: 422 });
 	} finally { active.delete(locals.user.id); }
 };
